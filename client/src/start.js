@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom";
 import Welcome from "./welcome.js";
+import Logo from "./logo.js";
 
 fetch("/user/id.json")
     .then((response) => response.json())
@@ -9,9 +10,6 @@ fetch("/user/id.json")
             ReactDOM.render(<Welcome />, document.querySelector("main"));
         } else {
             // this means our user IS registered/logged in!
-            ReactDOM.render(
-                <img src="/logo.gif" alt="logo" />,
-                document.querySelector("main")
-            );
+            ReactDOM.render(<Logo />, document.querySelector("main"));
         }
     });

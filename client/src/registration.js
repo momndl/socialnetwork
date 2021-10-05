@@ -5,7 +5,8 @@ export class Registration extends Component {
     constructor() {
         super();
         this.state = {
-            error: "Something went wrong with registration",
+            error: "",
+            userId: 0,
         };
         this.handleChange = this.handleChange.bind(this);
         // we can ommit the binding of this to our method when we use a function
@@ -43,6 +44,17 @@ export class Registration extends Component {
                 .json()
                 .then((resp) => {
                     console.log("POST /registrations.json:", resp);
+                    if (resp.success) {
+                        console.log("hat geklappt frau schwarz");
+                        this.setState({ userId: resp.userId });
+                        location.reload();
+                        // console.log("check id", this.state);
+                    } else {
+                        console.log("hat nicht geklappt, sad face");
+                        this.setState({
+                            error: "Something went wrong with registration",
+                        });
+                    }
                     // depending on whether or not our user successfully registered we now want to do either:
                     // a: user successfully registered, the should be send to the logged in experience, in this
                     // case we want to rerun our fetch from start.js
@@ -52,6 +64,9 @@ export class Registration extends Component {
                 })
                 .catch((err) => {
                     console.log("err in POST /registration.json", err);
+                    this.setState({
+                        error: "Something went wrong with registration",
+                    });
                     // update the error property in state!
                 })
         );
@@ -61,9 +76,9 @@ export class Registration extends Component {
             <section>
                 <h1>Registration</h1>
                 {this.state.error && (
-                    <h2 style={{ color: "red" }}> {this.state.error}</h2>
+                    <h2 className="regError"> {this.state.error}</h2>
                 )}
-                <form>
+                <form className="regForm">
                     <input
                         type="text"
                         name="first"

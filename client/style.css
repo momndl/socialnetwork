@@ -1,3 +1,19 @@
 body {
-    background-color: ghostwhite;
+    background-color: pink;
+}
+
+.logo {
+    width: 60px;
+}
+
+.regForm input {
+    border-radius: 5px;
+}
+
+.regForm button {
+    border-radius: 5px;
+}
+
+.regError {
+    color: rgb(160, 95, 95);
 }
