@@ -4,6 +4,7 @@ import { Component } from "react";
 import Logo from "./logo.js";
 import { Login } from "./login.js";
 import { BrowserRouter, Route } from "react-router-dom";
+import { Reset } from "./resetpassword";
 
 export class Welcome extends Component {
     render() {
@@ -16,6 +17,9 @@ export class Welcome extends Component {
                     </Route>
                     <Route path="/login">
                         <Login />
+                    </Route>
+                    <Route path="/passwordreset">
+                        <Reset />
                     </Route>
                 </section>
             </BrowserRouter>

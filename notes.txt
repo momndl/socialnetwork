@@ -1,2 +1,25 @@
 sudo service postgresql start
 database = socialnetwork
+
+
+vivacious.camp@spicedling.email - sender 
+vivacious.camp+funky@spicedling.email
+vivacious.camp+funkychicken@spicedling.email
+
+forget password link at login dingsi,
+
+wenn klicked neue seite mit email eingabe input, submit button , email in state?
+
+wenn submit clicked, secret code mit email schicken -> secret code in postgres speichern
+
+danach two textfields, enter code und enter new password, submit button
+
+danach
+
+query:
+order by created_at desc limit 1
+
+// TODO ==
+- styling is nice,
+- add interval to code query
+- error handling

@@ -30,3 +30,27 @@ module.exports.addUser = (first, last, email, password) => {
         [first, last, email, password]
     );
 };
+
+module.exports.addResetCode = (email, code) => {
+    return db.query(`INSERT INTO reset_codes (email, code) VALUES ($1, $2)`, [
+        email,
+        code,
+    ]);
+};
+
+module.exports.getResetCode = (email) => {
+    return db.query(
+        ` 
+    SELECT * FROM reset_codes
+    WHERE email = ($1) ORDER BY created_at DESC LIMIT 1
+    `,
+        [email]
+    );
+};
+
+module.exports.updatePassword = (password, email) => {
+    return db.query(`UPDATE users SET password = ($1) WHERE email = ($2)`, [
+        password,
+        email,
+    ]);
+};

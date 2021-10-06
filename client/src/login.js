@@ -71,6 +71,7 @@ export class Login extends Component {
                     <button onClick={(e) => this.handleLogin(e)}>login</button>
                 </form>
                 <Link to="/">Not registered? Go here!</Link>
+                <Link to="/passwordreset"> forget password?</Link>
             </section>
         );
     }

@@ -5,6 +5,8 @@ const path = require("path");
 const { hash, compare } = require("../bc.js");
 const cookieSession = require("cookie-session");
 const db = require("../db.js");
+const cryptoRandomString = require("crypto-random-string");
+const ses = require("../server/ses.js");
 
 app.use(compression());
 
@@ -31,6 +33,68 @@ app.get("/user/id.json", function (req, res) {
     // console.log("user-id", req.session.userId);
     res.json({
         userId: req.session.userId,
+    });
+});
+
+app.post("/password/reset/verify.json", (req, res) => {
+    const { email, code, password } = req.body;
+    console.log(email);
+
+    db.getResetCode(email)
+        .then((data) => {
+            console.log("code results", data);
+            if (data.rows[0].code == code) {
+                hash(password).then((hashedPW) => {
+                    db.updatePassword(hashedPW, email).then((data) => {
+                        res.json({ success: true, step: 3 });
+                    });
+                });
+            } else {
+                res.json({
+                    succes: false,
+                    error: "wrong code, please try again",
+                });
+            }
+        })
+        .catch((error) => console.log("error in password reset step 2", error));
+});
+
+app.post("/password/reset/start.json", (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.json({
+            success: false,
+            error: "please enter your email",
+        });
+    }
+    console.log("mail?", email);
+    const myEmail = email.split("@");
+
+    const secretCode = cryptoRandomString({
+        length: 6,
+    });
+
+    const address = `vivacious.camp+${myEmail[0]}@spicedling.email`; // string shizzle needed
+    const subject = "password reset";
+    const text = `hey friend, use this code ${secretCode} to reset your email`;
+
+    db.regCheck(email).then((data) => {
+        if (data.rows[0]) {
+            console.log("juhu", address);
+            ses.sendEmail(address, subject, text);
+            db.addResetCode(email, secretCode)
+                .then((resp) => {
+                    res.json({ success: true, step: 2 });
+                })
+                .catch((error) => {
+                    console.log("error in post password reset"), error;
+                });
+        } else {
+            res.json({
+                success: false,
+                error: "this email is not registered",
+            });
+        }
     });
 });
 
