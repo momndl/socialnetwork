@@ -1,5 +1,6 @@
 // class component
 import { Component } from "react";
+import { Link } from "react-router-dom";
 
 export class Registration extends Component {
     constructor() {
@@ -52,7 +53,7 @@ export class Registration extends Component {
                     } else {
                         console.log("hat nicht geklappt, sad face");
                         this.setState({
-                            error: "Something went wrong with registration",
+                            error: resp.error,
                         });
                     }
                     // depending on whether or not our user successfully registered we now want to do either:
@@ -65,7 +66,7 @@ export class Registration extends Component {
                 .catch((err) => {
                     console.log("err in POST /registration.json", err);
                     this.setState({
-                        error: "Something went wrong with registration",
+                        error: resp.error,
                     });
                     // update the error property in state!
                 })
@@ -106,6 +107,7 @@ export class Registration extends Component {
                     <button onClick={(e) => this.handleRegister(e)}>
                         register
                     </button>
+                    <Link to="/login">Already registered? Please login</Link>
                 </form>
             </section>
         );

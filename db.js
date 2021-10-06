@@ -16,14 +16,12 @@ console.log(`[db] Connecting to: ${database}`);
 
 // ==================== FUNCTIONS ======================
 
-module.exports.checkEmail = (email) => {
+module.exports.regCheck = (email) => {
     return db.query(
-        `
-    SELECT id FROM users WHERE email = ($1)
-    `,
+        `SELECT users.password, users.id FROM users WHERE email = $1`,
         [email]
     );
-};
+}; // same
 
 module.exports.addUser = (first, last, email, password) => {
     return db.query(

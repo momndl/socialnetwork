@@ -27,22 +27,46 @@ app.use(
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 
 app.get("/user/id.json", function (req, res) {
-    console.log("client wants to know if the user is registered/logged in");
-    console.log("user-id", req.session.userId);
+    // console.log("client wants to know if the user is registered/logged in");
+    // console.log("user-id", req.session.userId);
     res.json({
         userId: req.session.userId,
     });
-    // CODE BELOW IS NOT NEEDED THAT WAS TO DEMO THE BEHAVIOR IN CLASS
-    // mocking the response as I have NOT set up
-    // any cookie middleware
-    //mocking no userId cookie:
-    // res.json({
-    //     userId: undefined,
-    // });
-    // mocking actual userId value
-    // res.json({
-    //     userId: 57,
-    // });
+});
+
+app.post("/login.json", (req, res) => {
+    const { email, password } = req.body;
+
+    db.regCheck(email)
+        .then((data) => {
+            if (data.rows[0]) {
+                compare(password, data.rows[0].password).then(
+                    (passwordMatch) => {
+                        if (passwordMatch) {
+                            req.session.userId = data.rows[0].id;
+                            res.json({
+                                success: true,
+                                userId: data.rows[0].id,
+                            });
+                        } else {
+                            res.json({
+                                success: false,
+                                error: "invalid email or password :(",
+                            });
+                        }
+                    }
+                );
+            } else {
+                res.json({
+                    success: false,
+                    error: "invalid email or password :(",
+                });
+                // render error message, email or password unknown }
+            }
+        })
+        .catch((error) =>
+            console.log("error in post /login.json with db.regCheck", error)
+        );
 });
 
 app.post("/registration.json", (req, res) => {
@@ -53,29 +77,44 @@ app.post("/registration.json", (req, res) => {
     console.log("password", password);
 
     if (password && first && last && email) {
-        hash(password).then((hashedPW) => {
-            db.addUser(first, last, email, hashedPW)
-                .then((id) => {
-                    req.session.userId = id.rows[0].id;
-                    res.json({ success: true, userId: id.rows[0].id });
-                })
-                .catch((error) => {
-                    console.log("error in post reg", error);
-                    res.json({ success: false });
-                });
-
-            /* 
-    register our users:
-        hash their password (remem ber to setup bcrypt!)
-        and then insert all values submitted to the db -> need to setup our database 
-        stuff check your petit ion project !!
-        IF the user registers successfully let the client side know 
-        IF sth goes wrong let the client side know
-*/
-        });
+        db.regCheck(email)
+            .then((data) => {
+                if (!data.rows[0]) {
+                    hash(password).then((hashedPW) => {
+                        db.addUser(first, last, email, hashedPW)
+                            .then((id) => {
+                                req.session.userId = id.rows[0].id;
+                                res.json({
+                                    success: true,
+                                    userId: id.rows[0].id,
+                                });
+                            })
+                            .catch((error) => {
+                                console.log("error in post reg", error);
+                                res.json({
+                                    success: false,
+                                    error: "error :( please try again",
+                                });
+                            });
+                    });
+                } else {
+                    res.json({
+                        success: false,
+                        error: "email already in use",
+                    });
+                }
+            })
+            .catch((error) =>
+                console.log(
+                    "error in post /registration.json with db.regCheck",
+                    error
+                )
+            );
     } else {
-        console.log("error nicht alles ausgefuellt");
-        res.json({ success: false });
+        res.json({
+            success: false,
+            error: "please fill out all input fields",
+        });
     }
 });
 
