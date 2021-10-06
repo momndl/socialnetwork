@@ -56,7 +56,12 @@ app.post("/password/reset/verify.json", (req, res) => {
                 });
             }
         })
-        .catch((error) => console.log("error in password reset step 2", error));
+        .catch((error) =>
+            console.log(
+                "error in /password/reset/verify.json getResetCode",
+                error
+            )
+        );
 });
 
 app.post("/password/reset/start.json", (req, res) => {
@@ -67,35 +72,45 @@ app.post("/password/reset/start.json", (req, res) => {
             error: "please enter your email",
         });
     }
-    console.log("mail?", email);
+
     const myEmail = email.split("@");
 
     const secretCode = cryptoRandomString({
         length: 6,
     });
 
-    const address = `vivacious.camp+${myEmail[0]}@spicedling.email`; // string shizzle needed
+    const address = `vivacious.camp+${myEmail[0]}@spicedling.email`;
     const subject = "password reset";
     const text = `hey friend, use this code ${secretCode} to reset your email`;
 
-    db.regCheck(email).then((data) => {
-        if (data.rows[0]) {
-            console.log("juhu", address);
-            ses.sendEmail(address, subject, text);
-            db.addResetCode(email, secretCode)
-                .then((resp) => {
-                    res.json({ success: true, step: 2 });
-                })
-                .catch((error) => {
-                    console.log("error in post password reset"), error;
+    db.regCheck(email)
+        .then((data) => {
+            if (data.rows[0]) {
+                console.log("juhu", address);
+                ses.sendEmail(address, subject, text);
+                db.addResetCode(email, secretCode)
+                    .then((resp) => {
+                        res.json({ success: true, step: 2 });
+                    })
+                    .catch((error) => {
+                        console.log(
+                            "error in post /password/reset/start.json addResetCode",
+                            error
+                        );
+                    });
+            } else {
+                res.json({
+                    success: false,
+                    error: "this email is not registered",
                 });
-        } else {
-            res.json({
-                success: false,
-                error: "this email is not registered",
-            });
-        }
-    });
+            }
+        })
+        .catch((error) => {
+            console.log(
+                "error in post /password/reset/start.json regCheck",
+                error
+            );
+        });
 });
 
 app.post("/login.json", (req, res) => {

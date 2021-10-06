@@ -16,3 +16,4 @@ CREATE TABLE reset_codes(
      code VARCHAR,
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
+

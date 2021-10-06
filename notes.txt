@@ -22,4 +22,4 @@ order by created_at desc limit 1
 // TODO ==
 - styling is nice,
 - add interval to code query
-- error handling
+- everything is in welcome section... change!
