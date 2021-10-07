@@ -67,3 +67,33 @@ body {
 .profileSmall {
     width: 80px;
 }
+
+.hiddenFile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.picUploadBtn {
+    color: wheat;
+    background-color: yellowgreen;
+    border-radius: 5px;
+    font-size: 30px;
+}
+
+.uploadContainer {
+    border: solid black;
+    height: 500px;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.uploadContainer p {
+    border: solid black;
+}

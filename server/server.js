@@ -7,6 +7,8 @@ const cookieSession = require("cookie-session");
 const db = require("../db.js");
 const cryptoRandomString = require("crypto-random-string");
 const ses = require("../server/ses.js");
+const { uploader } = require("./upload");
+const s3 = require("./s3");
 
 app.use(compression());
 
@@ -28,6 +30,24 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 
+app.post("/upload", uploader.single("file"), s3.uploadS3, (req, res) => {
+    // console.log("req.body", req.body);
+    console.log("req.file", req.file);
+    if (req.file) {
+        const { filename } = req.file;
+        const url = "https://s3.amazonaws.com/spicedling/" + filename;
+        db.updatePicUrl(url, req.session.userId)
+            .then(() => {
+                res.json({ url: url });
+            })
+            .catch((error) =>
+                console.log("error in post /upload updatePicUrl", error)
+            );
+    } else {
+        res.json({ success: false });
+    }
+});
+
 app.get("/user/id.json", function (req, res) {
     // console.log("client wants to know if the user is registered/logged in");
     // console.log("user-id", req.session.userId);
@@ -43,10 +63,10 @@ app.get("/user.json", (req, res) => {
         })
         .then((userInfo) => {
             // console.log("haaalloo", userInfo);
-            res.json({ succes: true, userInfo });
+            res.json({ userInfo });
         })
         .catch((error) => {
-            res.json({ success: false });
+            res.json({ success: false }); // add error message =====================================================================
             console.log("error in get /user.json db.getUser:", error);
         });
 });
@@ -60,7 +80,7 @@ app.post("/password/reset/verify.json", (req, res) => {
             console.log("code results", data);
             if (data.rows[0].code == code) {
                 hash(password).then((hashedPW) => {
-                    db.updatePassword(hashedPW, email).then((data) => {
+                    db.updatePassword(hashedPW, email).then(() => {
                         res.json({ success: true, step: 3 });
                     });
                 });
@@ -104,7 +124,7 @@ app.post("/password/reset/start.json", (req, res) => {
                 console.log("juhu", address);
                 ses.sendEmail(address, subject, text);
                 db.addResetCode(email, secretCode)
-                    .then((resp) => {
+                    .then(() => {
                         res.json({ success: true, step: 2 });
                     })
                     .catch((error) => {

@@ -57,7 +57,16 @@ module.exports.updatePassword = (password, email) => {
 
 module.exports.getUser = (id) => {
     return db.query(
-        "SELECT id, first, last, bio, pic_url FROM users WHERE id = ($1)",
+        `SELECT id, first, last, bio, pic_url FROM users WHERE id = ($1)`,
         [id]
+    );
+};
+
+module.exports.updatePicUrl = (picUrl, id) => {
+    return db.query(
+        `
+    UPDATE users SET pic_url = ($1) WHERE id = ($2)
+    `,
+        [picUrl, id]
     );
 };
