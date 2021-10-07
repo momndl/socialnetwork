@@ -63,3 +63,7 @@ body {
 #login a:hover {
     color: red;
 }
+
+.profileSmall {
+    width: 80px;
+}

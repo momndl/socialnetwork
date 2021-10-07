@@ -36,6 +36,21 @@ app.get("/user/id.json", function (req, res) {
     });
 });
 
+app.get("/user.json", (req, res) => {
+    db.getUser(req.session.userId)
+        .then((data) => {
+            return data.rows[0];
+        })
+        .then((userInfo) => {
+            // console.log("haaalloo", userInfo);
+            res.json({ succes: true, userInfo });
+        })
+        .catch((error) => {
+            res.json({ success: false });
+            console.log("error in get /user.json db.getUser:", error);
+        });
+});
+
 app.post("/password/reset/verify.json", (req, res) => {
     const { email, code, password } = req.body;
     console.log(email);
