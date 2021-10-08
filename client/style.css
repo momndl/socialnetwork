@@ -1,9 +1,15 @@
 body {
     background-color: antiquewhite;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 .logo {
-    width: 60px;
+    height: 80px;
+    border-radius: 10px;
 }
 
 .regForm {
@@ -64,10 +70,6 @@ body {
     color: red;
 }
 
-.profileSmall {
-    width: 80px;
-}
-
 .hiddenFile {
     width: 0.1px;
     height: 0.1px;
@@ -96,4 +98,26 @@ body {
 
 .uploadContainer p {
     border: solid black;
+}
+
+.profileContainer img {
+    width: 300px;
+}
+
+.appHeader {
+    border: solid darkolivegreen;
+    border-width: 0px 0px 2px 0px;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr;
+    padding: 5px;
+}
+
+.appHeader .profileSmall {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    justify-self: end;
+    border-radius: 10px;
+    border: darkseagreen solid;
 }

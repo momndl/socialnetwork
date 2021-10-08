@@ -2,6 +2,7 @@ import { Component } from "react";
 import ProfilePic from "./profilepic";
 import { Uploader } from "./uploader.js";
 import Logo from "./logo.js";
+import Profile from "./profile";
 
 export class App extends Component {
     constructor(props) {
@@ -29,6 +30,9 @@ export class App extends Component {
     closeModal() {
         this.setState({ uploaderIsVisible: false });
     }
+    setBio(officialBio) {
+        //this fn is in charge of adding the offical bio(arg) to state of app
+    }
     render() {
         if (!this.state.userInfo) {
             return (
@@ -39,9 +43,19 @@ export class App extends Component {
         }
         return (
             <>
-                <Logo />
+                <header className="appHeader">
+                    <Logo />
 
-                <ProfilePic
+                    <ProfilePic
+                        imageUrl={this.state.userInfo.pic_url}
+                        first={this.state.userInfo.first}
+                        last={this.state.userInfo.last}
+                        clickHandler={() =>
+                            this.setState({ uploaderIsVisible: true })
+                        }
+                    />
+                </header>
+                <Profile
                     imageUrl={this.state.userInfo.pic_url}
                     first={this.state.userInfo.first}
                     last={this.state.userInfo.last}
