@@ -1,4 +1,5 @@
 import ProfilePic from "./profilepic";
+import BioEditor from "./bioEditor";
 
 export default function Profile(props) {
     console.log("props in profile: ", props);
@@ -12,6 +13,7 @@ export default function Profile(props) {
                 last={props.last}
                 imageUrl={props.imageUrl}
             />
+            <BioEditor bio={props.bio} updateBio={props.updateBio} />
         </div>
     );
 }

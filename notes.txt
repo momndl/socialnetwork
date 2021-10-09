@@ -25,3 +25,6 @@ vivacious.camp+funkychicken@spicedling.email
 -component did mount runs after render is called!!! -> render will run everry time state changes!
 
 -uploader component, make it a class so it has state and can show a loading status after upload
+
+// NEXT ->
+fetch draft bio to server, store in database, return bio from database to app. lazy sunday

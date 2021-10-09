@@ -7,9 +7,12 @@ import Profile from "./profile";
 export class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            bio: "",
+        };
         this.updateImage = this.updateImage.bind(this);
         this.closeModal = this.closeModal.bind(this);
+        this.updateBio = this.updateBio.bind(this);
     }
     componentDidMount() {
         fetch("/user.json")
@@ -18,6 +21,10 @@ export class App extends Component {
                 this.setState(data);
                 console.log("state check:", this.state); // check if success is really needed
             });
+    }
+    updateBio(bio) {
+        console.log("hello from app, update Bio", bio);
+        // this.setState({ bio: bio });
     }
     updateImage(url) {
         this.setState((prevState) => {
@@ -30,9 +37,7 @@ export class App extends Component {
     closeModal() {
         this.setState({ uploaderIsVisible: false });
     }
-    setBio(officialBio) {
-        //this fn is in charge of adding the offical bio(arg) to state of app
-    }
+
     render() {
         if (!this.state.userInfo) {
             return (
@@ -56,12 +61,14 @@ export class App extends Component {
                     />
                 </header>
                 <Profile
+                    bio={this.state.bio}
                     imageUrl={this.state.userInfo.pic_url}
                     first={this.state.userInfo.first}
                     last={this.state.userInfo.last}
                     clickHandler={() =>
                         this.setState({ uploaderIsVisible: true })
                     }
+                    updateBio={this.updateBio}
                 />
                 {this.state.uploaderIsVisible && (
                     <Uploader

@@ -1,52 +1,71 @@
-// check conditional rendering
-
-this.state = {
-    showTextArea: false,
-    draftBio: "",
-};
-
-//store textarea input via onchange event in draftBio. once, store butten is pushed. store bio in database
-
-// pass submit bio function so offical bio can live inside state of app
-
-submitBio() {
-
-
-
-    this.PaymentResponse.setBio(yourOfficialBio)
-}
-
-// down here code from encounter 
 import { Component } from "react";
 
 export default class BioEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showTextArea: false,
-            draftBio: ""
+            draftBio: "",
+            textAreaVisible: false,
         };
+        this.openTextArea = this.openTextArea.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+    }
+    openTextArea() {
+        console.log("ok", this.state);
+        this.setState({ textAreaVisible: true });
+    }
+    closeTextArea() {
+        this.setState({ textAreaVisible: false });
+    }
+    handleChange({ target }) {
+        console.log("someone is typing in an input field");
+        // console.log("target.name", target.name);
+        // console.log("target.value", target.value);
+        // add these values to the component's state
+        this.setState(
+            {
+                draftBio: target.value,
+            },
+            () => console.log("Registration state update:", this.state.draftBio)
+        );
     }
 
-    handleBioChange(e) {
-        // in here, you want to keep track of the bio that the user is typing in the textarea!
-        // store whatever that value is in bioEditor's state as the 'draftBio'
-    }
-
-    submitBio() {
-        // 1. make a fetch POST request with the draftBio that the user typed!
-        // grab the draftBio from bioEditor's state and send it along with the request!
-        // make sure you get back the newly added bio (from the database)
-
-        // 2. set the new official bio (the one you just got back from the db) in the state of APP
-        // the bio that lives in App's state is the official one ✅
-        // you can do something like -> this.props.setBio(yourOfficialBio)
-    }
+    // submitBio(e) {
+    //     // 1. make a fetch POST request with the draftBio that the user typed!
+    //     // grab the draftBio from bioEditor's state and send it along with the request!
+    //     // make sure you get back the newly added bio (from the database)
+    //     // 2. set the new official bio (the one you just got back from the db) in the state of APP
+    //     // the bio that lives in App's state is the official one ✅
+    //     // you can do something like -> this.props.setBio(yourOfficialBio)
+    // }
 
     render() {
         return (
             <div>
+                <p>bio editor component</p>
+
+                {!this.props.bio && (
+                    <h2 onClick={this.openTextArea}> add bio</h2>
+                )}
+                {this.state.textAreaVisible && (
+                    <>
+                        <textarea
+                            onChange={this.handleChange}
+                            name="bio"
+                            id="bio"
+                            cols="30"
+                            rows="10"
+                        ></textarea>
+                        <button onClick={this.props.updateBio}>
+                            update bio
+                        </button>
+                    </>
+                )}
+                {this.props.bio && <h2> {this.props.bio}</h2>}
                 {/* Do your rendering logic in here!
+
+                <p>{this.props.bio}</p>
+
                 It all depends on whether you are on edit more or not.
                 Whenever they click on the add or edit button, you are on edit mode - show the text area!
 
@@ -60,3 +79,20 @@ export default class BioEditor extends Component {
         );
     }
 }
+
+// this.state = {
+//     showTextArea: false,
+//     draftBio: "",
+// };
+
+// //store textarea input via onchange event in draftBio. once, store butten is pushed. store bio in database
+
+// // pass submit bio function so offical bio can live inside state of app
+
+// submitBio() {
+
+//     this.PaymentResponse.setBio(yourOfficialBio)
+// }
+
+// // down here code from encounter
+// // check conditional rendering
