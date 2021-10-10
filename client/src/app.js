@@ -19,11 +19,18 @@ export class App extends Component {
             .then((res) => res.json())
             .then((data) => {
                 this.setState(data);
-                console.log("state check:", this.state); // check if success is really needed
+                console.log("state check:", this.state.userInfo.bio); // check if success is really needed
             });
     }
     updateBio(bio) {
-        console.log("hello from app, update Bio", bio);
+        console.log("hello from app, update Bio", bio.officialBio);
+
+        this.setState((prevState) => {
+            let userInfo = Object.assign({}, prevState.userInfo);
+            userInfo.bio = bio.officialBio;
+            return { userInfo };
+        });
+
         // this.setState({ bio: bio });
     }
     updateImage(url) {
@@ -61,7 +68,7 @@ export class App extends Component {
                     />
                 </header>
                 <Profile
-                    bio={this.state.bio}
+                    bio={this.state.userInfo.bio}
                     imageUrl={this.state.userInfo.pic_url}
                     first={this.state.userInfo.first}
                     last={this.state.userInfo.last}

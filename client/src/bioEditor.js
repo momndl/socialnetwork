@@ -9,6 +9,10 @@ export default class BioEditor extends Component {
         };
         this.openTextArea = this.openTextArea.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.submitBio = this.submitBio.bind(this);
+    }
+    componentDidMount() {
+        console.log("props mounting bioEditor", this.props);
     }
     openTextArea() {
         console.log("ok", this.state);
@@ -18,26 +22,38 @@ export default class BioEditor extends Component {
         this.setState({ textAreaVisible: false });
     }
     handleChange({ target }) {
-        console.log("someone is typing in an input field");
+        // console.log("someone is typing in an input field");
         // console.log("target.name", target.name);
-        // console.log("target.value", target.value);
+        console.log("target.value", this.state);
         // add these values to the component's state
-        this.setState(
-            {
-                draftBio: target.value,
-            },
-            () => console.log("Registration state update:", this.state.draftBio)
-        );
+        this.setState({
+            draftBio: target.value,
+        });
     }
 
-    // submitBio(e) {
-    //     // 1. make a fetch POST request with the draftBio that the user typed!
-    //     // grab the draftBio from bioEditor's state and send it along with the request!
-    //     // make sure you get back the newly added bio (from the database)
-    //     // 2. set the new official bio (the one you just got back from the db) in the state of APP
-    //     // the bio that lives in App's state is the official one ✅
-    //     // you can do something like -> this.props.setBio(yourOfficialBio)
-    // }
+    submitBio() {
+        console.log("test bio", this.state.draftBio);
+        fetch("/user/updatebio.json", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(this.state),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("data after submitBio fetch", data);
+                this.props.updateBio(data);
+                this.setState({ textAreaVisible: false });
+            })
+            .catch((error) => console.log("error in submit bio", error));
+        // 1. make a fetch POST request with the draftBio that the user typed!
+        // grab the draftBio from bioEditor's state and send it along with the request!
+        // make sure you get back the newly added bio (from the database)
+        // 2. set the new official bio (the one you just got back from the db) in the state of APP
+        // the bio that lives in App's state is the official one ✅
+        // you can do something like -> this.props.setBio(yourOfficialBio)
+    }
 
     render() {
         return (
@@ -56,12 +72,15 @@ export default class BioEditor extends Component {
                             cols="30"
                             rows="10"
                         ></textarea>
-                        <button onClick={this.props.updateBio}>
-                            update bio
-                        </button>
+                        <button onClick={this.submitBio}>update bio</button>
                     </>
                 )}
-                {this.props.bio && <h2> {this.props.bio}</h2>}
+                {this.props.bio && (
+                    <>
+                        <h2> {this.props.bio}</h2>
+                        <h2 onClick={this.openTextArea}> edit bio</h2>
+                    </>
+                )}
                 {/* Do your rendering logic in here!
 
                 <p>{this.props.bio}</p>

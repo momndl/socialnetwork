@@ -56,6 +56,16 @@ app.get("/user/id.json", function (req, res) {
     });
 });
 
+app.post("/user/updatebio.json", (req, res) => {
+    const { draftBio } = req.body;
+    console.log("draftBio", draftBio);
+    db.updateBio(draftBio, req.session.userId).then((data) => {
+        console.log("data from d b", data);
+        res.json({ officialBio: data.rows[0].bio });
+    });
+    // res.json(req.body);
+});
+
 app.get("/user.json", (req, res) => {
     db.getUser(req.session.userId)
         .then((data) => {
