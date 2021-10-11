@@ -5,6 +5,7 @@ import Logo from "./logo.js";
 import Profile from "./profile";
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import FindPeople from "./findpeople";
+import Header from "./header";
 
 export class App extends Component {
     constructor(props) {
@@ -12,6 +13,7 @@ export class App extends Component {
         this.state = {
             bio: "",
         };
+
         this.updateImage = this.updateImage.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.updateBio = this.updateBio.bind(this);
@@ -57,20 +59,14 @@ export class App extends Component {
         }
         return (
             <BrowserRouter>
-                <header className="appHeader">
-                    <Link to="/">
-                        <Logo />
-                    </Link>
-                    <Link to="/find-people">find people!</Link>
-                    <ProfilePic
-                        imageUrl={this.state.userInfo.pic_url}
-                        first={this.state.userInfo.first}
-                        last={this.state.userInfo.last}
-                        clickHandler={() =>
-                            this.setState({ uploaderIsVisible: true })
-                        }
-                    />
-                </header>
+                <Header
+                    imageUrl={this.state.userInfo.pic_url}
+                    first={this.state.userInfo.first}
+                    last={this.state.userInfo.last}
+                    clickHandler={() =>
+                        this.setState({ uploaderIsVisible: true })
+                    }
+                />
                 <Route exact path="/">
                     <Profile
                         bio={this.state.userInfo.bio}

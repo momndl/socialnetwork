@@ -84,9 +84,16 @@ module.exports.findPeople = () => {
     );
 };
 
-module.exports.getMatchingUsers = (searchTerm) => {
+module.exports.getMatchingUsersFirst = (searchTerm) => {
     return db.query(
         `SELECT id, first, last, pic_url FROM users WHERE first ILIKE ($1);`,
+        [searchTerm + "%"]
+    );
+};
+
+module.exports.getMatchingUsersLast = (searchTerm) => {
+    return db.query(
+        `SELECT id, first, last, pic_url FROM users WHERE last ILIKE ($1);`,
         [searchTerm + "%"]
     );
 };

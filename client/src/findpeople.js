@@ -17,10 +17,13 @@ export default function FindPeople() {
 
     useEffect(() => {
         if (searchTerm == "") {
-            console.log("irgendwas ", searchTerm);
+            console.log("empty");
         } else {
             console.log("irgendwas mit searchTerm", searchTerm);
+            // const test = searchTerm.split(" ");
+            // console.log("split test", test);
             const reqBody = { find: searchTerm };
+            // change fetch back to "/find-more-people.json"
             fetch("/find-more-people.json", {
                 method: "POST",
                 headers: {

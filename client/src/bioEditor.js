@@ -66,6 +66,7 @@ export default class BioEditor extends Component {
                 {this.state.textAreaVisible && (
                     <>
                         <textarea
+                            defaultValue={this.props.bio}
                             onChange={this.handleChange}
                             name="bio"
                             id="bio"

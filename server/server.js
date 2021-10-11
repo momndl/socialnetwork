@@ -52,7 +52,7 @@ app.get("/find-people.json", (req, res) => {
     console.log("next make a db query att /findpeople");
     db.findPeople()
         .then((data) => {
-            console.log("return data in server", data);
+            console.log("return data in server find three", data);
             res.json(data.rows);
         })
         .catch((error) => console.log("error in /find-people", error));
@@ -60,13 +60,41 @@ app.get("/find-people.json", (req, res) => {
 
 app.post("/find-more-people.json", (req, res) => {
     const { find } = req.body;
-    db.getMatchingUsers(find)
+    const values = find.split(" ");
+    console.log("find in server", values.length);
+    let matches = [];
+
+    db.getMatchingUsersFirst(find)
         .then((data) => {
-            console.log("return data in server", data.rows);
+            // matches.push(data.rows);
+            // console.log("return data in server", matches[0]);
+            //res.json(matches[0]);
             res.json(data.rows);
+
+            //     if (values[1]) {
+            //         console.log("IF!");
+            //         return db.getMatchingUsersLast(values[1]);
+            //     } else {
+            //         console.log("ELSE!");
+
+            //         return;
+            //     }
+            // })
+            // .then((matchingLastnames) => {
+            //     //console.log("matchinglastnames", matchingLastnames);
+            //     matches.push(matchingLastnames);
+            //     console.log("mathce s", matches);
+            //     res.json(matches[0]);
         })
         .catch((error) => console.log("error in /find-more-people", error));
 });
+
+// app.post("/test.json", (req, res) => {
+//     console.log("irgendwas angegkommen in test");
+//     const body = req.body;
+//     console.log("body in test", body);
+//     res.json(body);
+// });
 
 app.get("/user/id.json", function (req, res) {
     // console.log("client wants to know if the user is registered/logged in");

@@ -32,6 +32,7 @@ export class Uploader extends Component {
         // } => dont show anything until data is loaded
         return (
             <div className="uploadContainer">
+                <h1> upload a new profile picture </h1>
                 <p onClick={this.props.closeModal}>x</p>
                 <form>
                     <input
