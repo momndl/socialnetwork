@@ -77,3 +77,16 @@ module.exports.updateBio = (bio, id) => {
         [bio, id]
     );
 };
+
+module.exports.findPeople = () => {
+    return db.query(
+        `SELECT id, first, last, pic_url FROM users ORDER BY id DESC LIMIT 3`
+    );
+};
+
+module.exports.getMatchingUsers = (searchTerm) => {
+    return db.query(
+        `SELECT id, first, last, pic_url FROM users WHERE first ILIKE ($1);`,
+        [searchTerm + "%"]
+    );
+};

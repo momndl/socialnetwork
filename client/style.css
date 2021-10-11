@@ -118,11 +118,18 @@ body {
     height: 80px;
     object-fit: cover;
     justify-self: end;
-    border-radius: 10px;
+    border-radius: 11px;
     border: solid darkolivegreen;
 }
 
 .appHeader .profileSmall:hover {
     cursor: pointer;
     border: solid rgb(109, 139, 57);
+}
+
+.findPeopleContainer img {
+    height: 200px;
+    width: 200px;
+    object-fit: cover;
+    border-radius: 30%;
 }

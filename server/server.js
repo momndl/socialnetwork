@@ -48,6 +48,26 @@ app.post("/upload", uploader.single("file"), s3.uploadS3, (req, res) => {
     }
 });
 
+app.get("/find-people.json", (req, res) => {
+    console.log("next make a db query att /findpeople");
+    db.findPeople()
+        .then((data) => {
+            console.log("return data in server", data);
+            res.json(data.rows);
+        })
+        .catch((error) => console.log("error in /find-people", error));
+});
+
+app.post("/find-more-people.json", (req, res) => {
+    const { find } = req.body;
+    db.getMatchingUsers(find)
+        .then((data) => {
+            console.log("return data in server", data.rows);
+            res.json(data.rows);
+        })
+        .catch((error) => console.log("error in /find-more-people", error));
+});
+
 app.get("/user/id.json", function (req, res) {
     // console.log("client wants to know if the user is registered/logged in");
     // console.log("user-id", req.session.userId);

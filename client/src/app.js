@@ -3,6 +3,8 @@ import ProfilePic from "./profilepic";
 import { Uploader } from "./uploader.js";
 import Logo from "./logo.js";
 import Profile from "./profile";
+import { BrowserRouter, Route, Link } from "react-router-dom";
+import FindPeople from "./findpeople";
 
 export class App extends Component {
     constructor(props) {
@@ -54,10 +56,12 @@ export class App extends Component {
             );
         }
         return (
-            <>
+            <BrowserRouter>
                 <header className="appHeader">
-                    <Logo />
-
+                    <Link to="/">
+                        <Logo />
+                    </Link>
+                    <Link to="/find-people">find people!</Link>
                     <ProfilePic
                         imageUrl={this.state.userInfo.pic_url}
                         first={this.state.userInfo.first}
@@ -67,23 +71,28 @@ export class App extends Component {
                         }
                     />
                 </header>
-                <Profile
-                    bio={this.state.userInfo.bio}
-                    imageUrl={this.state.userInfo.pic_url}
-                    first={this.state.userInfo.first}
-                    last={this.state.userInfo.last}
-                    clickHandler={() =>
-                        this.setState({ uploaderIsVisible: true })
-                    }
-                    updateBio={this.updateBio}
-                />
-                {this.state.uploaderIsVisible && (
-                    <Uploader
-                        closeModal={this.closeModal}
-                        updateImage={this.updateImage}
+                <Route exact path="/">
+                    <Profile
+                        bio={this.state.userInfo.bio}
+                        imageUrl={this.state.userInfo.pic_url}
+                        first={this.state.userInfo.first}
+                        last={this.state.userInfo.last}
+                        clickHandler={() =>
+                            this.setState({ uploaderIsVisible: true })
+                        }
+                        updateBio={this.updateBio}
                     />
-                )}
-            </>
+                    {this.state.uploaderIsVisible && (
+                        <Uploader
+                            closeModal={this.closeModal}
+                            updateImage={this.updateImage}
+                        />
+                    )}
+                </Route>
+                <Route path="/find-people">
+                    <FindPeople />
+                </Route>
+            </BrowserRouter>
         );
     }
 }

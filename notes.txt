@@ -28,3 +28,17 @@ vivacious.camp+funkychicken@spicedling.email
 
 // NEXT ->
 fetch draft bio to server, store in database, return bio from database to app. lazy sunday
+
+-> hooks <-
+#1 - start with use useState(), useEffect()
+#2 - can only be called from function componenent
+#3 - have to be called from top level. cant be called inside a loop or conditional
+#4 - have to run everytime fn component is called
+
+export default function Profile() {
+    - state related stuff 
+    - hook
+
+}
+
+es7 check it out
