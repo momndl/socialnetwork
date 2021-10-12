@@ -41,4 +41,5 @@ export default function Profile() {
 
 }
 
-es7 check it out
+NOTES TO TESTING SHIZZLE -
+normal file names app.test.js ->

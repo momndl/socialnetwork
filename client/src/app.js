@@ -6,6 +6,7 @@ import Profile from "./profile";
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import FindPeople from "./findpeople";
 import Header from "./header";
+import OtherProfile from "./otherProfile.js";
 
 export class App extends Component {
     constructor(props) {
@@ -84,6 +85,9 @@ export class App extends Component {
                             updateImage={this.updateImage}
                         />
                     )}
+                </Route>
+                <Route path="/user/:otherUserId">
+                    <OtherProfile />
                 </Route>
                 <Route path="/find-people">
                     <FindPeople />

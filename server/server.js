@@ -295,6 +295,26 @@ app.get("/logout", (req, res) => {
     res.redirect("/");
 });
 
+app.get("/user/:id.json", (req, res) => {
+    console.log("fetch get to user:id.json has been made");
+
+    const { id } = req.params;
+    const profileId = id.replace(":", "");
+
+    console.log("profileId", profileId);
+    console.log("my own id:", req.session.userId);
+
+    if (profileId == req.session.userId) {
+        console.log("OWN PROFILE, GO BACK TO '/' !!!");
+        // res.json({success: false}) or something like that to do this
+    } else {
+        db.getUser(profileId).then((data) => {
+            console.log(data.rows[0]);
+            res.json(data.rows[0]);
+        });
+    }
+});
+
 app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 });
