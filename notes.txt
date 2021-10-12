@@ -43,3 +43,5 @@ export default function Profile() {
 
 NOTES TO TESTING SHIZZLE -
 normal file names app.test.js ->
+
+was wir wollen: -> userinfo rendering conditional machen

@@ -296,22 +296,24 @@ app.get("/logout", (req, res) => {
 });
 
 app.get("/user/:id.json", (req, res) => {
-    console.log("fetch get to user:id.json has been made");
-
     const { id } = req.params;
     const profileId = id.replace(":", "");
 
-    console.log("profileId", profileId);
-    console.log("my own id:", req.session.userId);
-
     if (profileId == req.session.userId) {
-        console.log("OWN PROFILE, GO BACK TO '/' !!!");
-        // res.json({success: false}) or something like that to do this
+        res.json({ ownProfile: true });
     } else {
-        db.getUser(profileId).then((data) => {
-            console.log(data.rows[0]);
-            res.json(data.rows[0]);
-        });
+        db.getUser(profileId)
+            .then((data) => {
+                if (typeof data.rows[0] == "undefined") {
+                    res.json({ userNotFound: true });
+                } else {
+                    res.json(data.rows[0]);
+                }
+            })
+            .catch((error) => {
+                console.log("error in getUser at /user/:id.json", error);
+                res.json({ userNotFound: true });
+            });
     }
 });
 

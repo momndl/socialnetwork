@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router";
+import { Link } from "react-router-dom";
 
 export default function OtherProfile() {
     const [user, setUser] = useState({});
+    const [error, setError] = useState({});
     const params = useParams();
     const { otherUserId } = useParams();
     const history = useHistory();
@@ -10,18 +12,24 @@ export default function OtherProfile() {
         let abort = false;
         console.log("otherprofilerendered");
         console.log("params", params);
-        fetch(`/user/:${otherUserId}.json`)
-            .then((res) => res.json())
-            .then((usersFound) => {
-                console.log("data after fetch find people", usersFound);
-                setUser(usersFound);
-            })
-            .catch(console.log); // {otherUserId: number}
+        // {otherUserId: number}
         // we'll need to figure out which user profile we should show! so our  server should be given the
         // otherUserId from the url in the brwoser
-        console.log("userid we want to see", otherUserId);
+        //  console.log("userid we want to see", otherUserId);
         if (!abort) {
-            console.log("history", history);
+            fetch(`/user/:${otherUserId}.json`)
+                .then((res) => res.json())
+                .then((otherProfile) => {
+                    setUser(otherProfile);
+
+                    if (otherProfile.ownProfile) {
+                        return history.push("/");
+                    } else if (otherProfile.userNotFound) {
+                        setError(otherProfile);
+                    }
+                })
+                .catch(console.log);
+            console.log("user", user);
             //if(otherUserId == ourId ) { history.push("/")}
             //we need to make fetch to get the users profilepic, first, last, bio
             // the data from server needs to be put in state
@@ -35,14 +43,22 @@ export default function OtherProfile() {
         };
     }, []);
     return (
-        <div>
-            <img src={user.pic_url} alt={user.first} />
+        <>
+            {error.userNotFound && (
+                <>
+                    <h2> user not found </h2>
+                    <Link to="/find-people">try again?</Link>
+                </>
+            )}
+            <div>
+                <img src={user.pic_url} alt={user.first} />
 
-            <p>
-                {user.first} {user.last}
-            </p>
-            <p>{user.bio}</p>
-        </div>
+                <p>
+                    {user.first} {user.last}
+                </p>
+                <p>{user.bio}</p>
+            </div>
+        </>
     );
 }
 
