@@ -295,14 +295,24 @@ app.get("/logout", (req, res) => {
     res.redirect("/");
 });
 
+app.get("/relation/:id.json", (req, res) => {
+    const { id: viewedProfile } = req.params;
+    const loggedInUser = req.session.userId;
+    // db.checkFriendship(loggedInUser, viewedProfile).then((data) => {
+    //     console.log("checkFriendship data", data);
+    // });
+
+    //  console.log("fetch has been made", id, " test ",// profileId);
+    res.json("ingo");
+});
+
 app.get("/user/:id.json", (req, res) => {
     const { id } = req.params;
-    const profileId = id.replace(":", "");
 
-    if (profileId == req.session.userId) {
+    if (id == req.session.userId) {
         res.json({ ownProfile: true });
     } else {
-        db.getUser(profileId)
+        db.getUser(id)
             .then((data) => {
                 if (typeof data.rows[0] == "undefined") {
                     res.json({ userNotFound: true });

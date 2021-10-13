@@ -45,3 +45,8 @@ NOTES TO TESTING SHIZZLE -
 normal file names app.test.js ->
 
 was wir wollen: -> userinfo rendering conditional machen
+
+FRIENDBTN component in otherprofile. Props otherUserId 
+-> in useEffect fetch something like /relation/id.json
+->  in server get relation/:id -> question what is relation between logged in user and users page -> send back status, put in state, btn will render in relation of relationship
+    between users (add friend /// end friendship)

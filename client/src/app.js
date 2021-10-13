@@ -24,7 +24,7 @@ export class App extends Component {
             .then((res) => res.json())
             .then((data) => {
                 this.setState(data);
-                console.log("state check:", this.state.userInfo.bio); // check if success is really needed
+                //console.log("state check:", this.state.userInfo.bio); // check if success is really needed
             });
     }
     updateBio(bio) {

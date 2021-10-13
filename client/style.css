@@ -184,3 +184,12 @@ body {
 .headerLeft a {
     display: inline;
 }
+
+.friendshipBtn {
+    background-color: rgba(85, 107, 47, 0.815);
+    color: antiquewhite;
+}
+
+.friendshipBtn:hover {
+    cursor: pointer;
+}
