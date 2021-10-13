@@ -295,15 +295,66 @@ app.get("/logout", (req, res) => {
     res.redirect("/");
 });
 
+app.post("/update/status.json", (req, res) => {
+    console.log("post has been mademademade");
+    const { buttonText, otherUserId: viewedProfile } = req.body;
+    const loggedInUser = req.session.userId;
+    //console.log("buttonText:", buttonText, " other user id:", otherUserId);
+    if (buttonText == "Send Friend Request") {
+        db.setFriendRequest(loggedInUser, viewedProfile)
+            .then(() => {
+                res.json({ buttonText: "Cancel Friend Request" });
+            })
+            .catch(console.log);
+    } else if (
+        buttonText == "Cancel Friend Request" ||
+        buttonText == "Unfriend"
+    ) {
+        // database deletion
+        db.deleteFriendRequest(loggedInUser, viewedProfile)
+            .then(() => {
+                res.json({ buttonText: "Send Friend Request" });
+            })
+            .catch(console.log);
+    } else if (buttonText == "Accept Friend Request") {
+        // database query, accepted truea
+        db.updateFriendRequest(loggedInUser, viewedProfile)
+            .then(() => {
+                res.json({ buttonText: "Unfriend" });
+            })
+            .catch(console.log);
+    }
+});
+
 app.get("/relation/:id.json", (req, res) => {
     const { id: viewedProfile } = req.params;
     const loggedInUser = req.session.userId;
-    // db.checkFriendship(loggedInUser, viewedProfile).then((data) => {
-    //     console.log("checkFriendship data", data);
-    // });
+    db.checkFriendship(loggedInUser, viewedProfile)
+        .then((data) => {
+            console.log("checkFriendship data", data);
+            if (data.rowCount == 0) {
+                console.log("no friends");
+                res.json({ buttonText: "Send Friend Request" });
+            } else if (
+                !data.rows[0].accepted &&
+                data.rows[0].recipient_id == loggedInUser
+            ) {
+                res.json({ buttonText: "Accept Friend Request" });
+            } else if (
+                !data.rows[0].accepted &&
+                data.rows[0].recipient_id == viewedProfile
+            ) {
+                res.json({ buttonText: "Cancel Friend Request" });
+            } else if (data.rows[0].accepted) {
+                res.json({ buttonText: "Unfriend" });
+            } else {
+                res.json({ buttonText: "ingo" });
+            }
+        })
+        .catch(console.log);
 
     //  console.log("fetch has been made", id, " test ",// profileId);
-    res.json("ingo");
+    //res.json("ingo");
 });
 
 app.get("/user/:id.json", (req, res) => {

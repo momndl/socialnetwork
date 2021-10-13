@@ -101,12 +101,36 @@ module.exports.getMatchingUsersLast = (searchTerm) => {
 module.exports.checkFriendship = (loggedInUser, viewedProfile) => {
     return db.query(
         `
-    
-    SELECT * FROM friendships
-WHERE (recipient_id = $1 AND sender_id = $2)
-OR (recipient_id = $2 AND sender_id = $1)
-    
-    
+        SELECT * FROM friendships WHERE (recipient_id = $1 AND sender_id = $2)
+        OR (recipient_id = $2 AND sender_id = $1)`,
+        [loggedInUser, viewedProfile]
+    );
+};
+
+module.exports.setFriendRequest = (loggedInUser, viewedProfile) => {
+    return db.query(
+        `
+    INSERT INTO friendships (sender_id, recipient_id) VALUES ($1, $2)
+    `,
+        [loggedInUser, viewedProfile]
+    );
+};
+
+module.exports.updateFriendRequest = (loggedInUser, viewedProfile) => {
+    return db.query(
+        `
+        UPDATE friendships SET accepted = true WHERE recipient_id = $1 AND sender_id = $2
+        
+    `,
+        [loggedInUser, viewedProfile]
+    );
+};
+
+module.exports.deleteFriendRequest = (loggedInUser, viewedProfile) => {
+    return db.query(
+        `
+    DELETE FROM friendships WHERE (recipient_id = $1 AND sender_id = $2)
+        OR (recipient_id = $2 AND sender_id = $1)
     `,
         [loggedInUser, viewedProfile]
     );
