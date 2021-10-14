@@ -51,7 +51,7 @@ export default function OtherProfile() {
                     <Link to="/find-people">try again?</Link>
                 </>
             )}
-            <div>
+            <div className="otherProfile">
                 <img src={user.pic_url} alt={user.first} />
 
                 <p>
