@@ -44,9 +44,33 @@ export default function Profile() {
 NOTES TO TESTING SHIZZLE -
 normal file names app.test.js ->
 
-was wir wollen: -> userinfo rendering conditional machen
+==============================
+NOTES TO REDUX ==>
 
-FRIENDBTN component in otherprofile. Props otherUserId 
--> in useEffect fetch something like /relation/id.json
-->  in server get relation/:id -> question what is relation between logged in user and users page -> send back status, put in state, btn will render in relation of relationship
-    between users (add friend /// end friendship)
+STORE => central component of redux, holds the state.
+
+ACTION => fancy term for javascript object, describing an event to lead to a state update i.E. { type: "bio/updated", payload: "data"} 
+
+ACTION CREATOR => FUNCTIONS THAT RETURN ACTIONS
+
+DISPATCHING => act of sending an action to the store.
+
+REDUCER => function with two inputs, one output(newState) i.E.(state, action) => newState
+    - not allowed to change the previous state! -> always create new copy of state 
+    - not allowed to cause side effects (any kind of action such as ajax requests, or db.querys etc.)
+
+                        function reducer(state, action) {
+
+                            const newState = {}
+
+                            if(action.type === "todo/added") {
+                                newState.todo = [...state.todo, action.payload]
+                            }
+
+                            return newState
+                        }
+
+    ==================== objects are reference values!!! ======================== 
+    so use the ... spread operator!
+    BUT! => it only copies on root level. nested values need to be treatet different -> use spreadoperator again :D 
+    
