@@ -115,6 +115,7 @@ app.post("/user/updatebio.json", (req, res) => {
 });
 
 app.get("/user.json", (req, res) => {
+    console.log("i dont want this");
     db.getUser(req.session.userId)
         .then((data) => {
             return data.rows[0];
@@ -331,7 +332,7 @@ app.get("/relation/:id.json", (req, res) => {
     const loggedInUser = req.session.userId;
     db.checkFriendship(loggedInUser, viewedProfile)
         .then((data) => {
-            console.log("checkFriendship data", data);
+            // console.log("checkFriendship data", data);
             if (data.rowCount == 0) {
                 console.log("no friends");
                 res.json({ buttonText: "Send Friend Request" });
@@ -359,6 +360,7 @@ app.get("/relation/:id.json", (req, res) => {
 
 app.get("/user/:id.json", (req, res) => {
     const { id } = req.params;
+    console.log("this i want to see");
 
     if (id == req.session.userId) {
         res.json({ ownProfile: true });

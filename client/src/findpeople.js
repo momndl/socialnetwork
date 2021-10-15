@@ -19,7 +19,6 @@ export default function FindPeople() {
         if (searchTerm == "") {
             console.log("empty");
         } else {
-            console.log("irgendwas mit searchTerm", searchTerm);
             // const test = searchTerm.split(" ");
             // console.log("split test", test);
             const reqBody = { find: searchTerm };
@@ -33,10 +32,10 @@ export default function FindPeople() {
             })
                 .then((res) => res.json())
                 .then((usersFound) => {
-                    console.log(
-                        "data after fetch find more poeple",
-                        usersFound
-                    );
+                    // console.log(
+                    //     "data after fetch find more poeple",
+                    //     usersFound
+                    // );
                     setUsers(usersFound);
                 })
                 .catch(console.log);

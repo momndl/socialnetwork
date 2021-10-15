@@ -8,6 +8,8 @@ import FindPeople from "./findpeople";
 import Header from "./header";
 import OtherProfile from "./otherProfile.js";
 
+// add a route that renders our new friends component
+
 export class App extends Component {
     constructor(props) {
         super(props);
