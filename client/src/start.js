@@ -4,7 +4,7 @@ import { App } from "./app.js";
 import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { composeWithDevTools } from "redux-devtools-extension";
-import { reducer } from "./redux/reducer.js";
+import reducer from "./redux/reducer.js";
 import * as immutableState from "redux-immutable-state-invariant";
 
 // createStore, applymiddleware from redux
@@ -29,6 +29,7 @@ const elem = (
 fetch("/user/id.json")
     .then((response) => response.json())
     .then((data) => {
+        console.log("data after start fetch", data);
         if (!data.userId) {
             // this means our user is not registered/logged in, we should see Welcome component
             ReactDOM.render(<Welcome />, document.querySelector("main"));

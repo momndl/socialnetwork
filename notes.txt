@@ -92,3 +92,6 @@ REDUCER => function with two inputs, one output(newState) i.E.(state, action) =>
         -> friends componenen(like hotornot.js), redux/reducer.js, redux/friends/slice.js, initalze start.js, app.js(router)
 
 ALSO TO DO: check routes in server -> user.json and user/:id -> something wrong happens?
+
+// LOGIN => hung up
+

@@ -135,3 +135,16 @@ module.exports.deleteFriendRequest = (loggedInUser, viewedProfile) => {
         [loggedInUser, viewedProfile]
     );
 };
+
+module.exports.getFriendsAndWannabes = (loggedInUser) => {
+    return db.query(
+        `SELECT users.id, first, last, pic_url, accepted, sender_id
+    FROM friendships
+    JOIN users
+    ON (accepted = false AND recipient_id = ($1) AND sender_id = users.id)
+    OR (accepted = true AND recipient_id = ($1) AND sender_id = users.id)
+    OR (accepted = true AND sender_id = ($1) AND recipient_id = users.id)
+    OR (accepted = false AND sender_id = ($1) AND recipient_id = users.id)`,
+        [loggedInUser]
+    );
+};

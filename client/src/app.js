@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Link } from "react-router-dom";
 import FindPeople from "./findpeople";
 import Header from "./header";
 import OtherProfile from "./otherProfile.js";
+import Friends from "./friends.js";
 
 // add a route that renders our new friends component
 
@@ -93,6 +94,9 @@ export class App extends Component {
                 </Route>
                 <Route path="/find-people">
                     <FindPeople />
+                </Route>
+                <Route path="/friends">
+                    <Friends />
                 </Route>
             </BrowserRouter>
         );

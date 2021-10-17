@@ -7,6 +7,17 @@ export default function Header(props) {
     useEffect(() => {
         console.log("props", props);
     }, []);
+    const handleLogout = () => {
+        console.log("hi");
+        fetch("/logout")
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.success) {
+                    location.replace("/");
+                }
+            });
+    };
+
     return (
         <header className="appHeader">
             <div className="headerLeft">
@@ -15,7 +26,11 @@ export default function Header(props) {
                 </Link>
             </div>
             <div className="headerRight">
+                <Link to="/friends">friends</Link>
+
                 <Link to="/find-people">find people!</Link>
+
+                <span onClick={() => handleLogout()}> logout </span>
                 <ProfilePic
                     imageUrl={props.imageUrl}
                     first={props.first}

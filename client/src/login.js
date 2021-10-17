@@ -34,7 +34,7 @@ export class Login extends Component {
                 .then((resp) => {
                     console.log("POST /login.json:", resp);
                     if (resp.success) {
-                        location.reload();
+                        location.replace("/");
                     } else {
                         this.setState({
                             error: resp.error,

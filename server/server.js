@@ -97,8 +97,8 @@ app.post("/find-more-people.json", (req, res) => {
 // });
 
 app.get("/user/id.json", function (req, res) {
-    // console.log("client wants to know if the user is registered/logged in");
-    // console.log("user-id", req.session.userId);
+    console.log("client wants to know if the user is registered/logged in");
+    console.log("user-id", req.session.userId);
     res.json({
         userId: req.session.userId,
     });
@@ -293,11 +293,11 @@ app.post("/registration.json", (req, res) => {
 
 app.get("/logout", (req, res) => {
     req.session = null;
-    res.redirect("/");
+    res.json({ success: true });
 });
 
 app.post("/update/status.json", (req, res) => {
-    console.log("post has been mademademade");
+    console.log("post has been madem to update/status.json");
     const { buttonText, otherUserId: viewedProfile } = req.body;
     const loggedInUser = req.session.userId;
     //console.log("buttonText:", buttonText, " other user id:", otherUserId);
@@ -325,6 +325,40 @@ app.post("/update/status.json", (req, res) => {
             })
             .catch(console.log);
     }
+});
+
+app.post("/friends/update/:id.json", (req, res) => {
+    console.log("post to update friends has been made");
+    const { id: viewedProfile } = req.params;
+    const loggedInUser = req.session.userId;
+    console.log(
+        "viewedProfile: ",
+        viewedProfile,
+        " loggedInUser: ",
+        loggedInUser
+    );
+    db.updateFriendRequest(loggedInUser, viewedProfile)
+        .then(() => {
+            res.json({ success: true });
+        })
+        .catch(console.log);
+});
+
+app.post("/friends/remove/:id.json", (req, res) => {
+    console.log("post to remove friends has been made");
+    const { id: viewedProfile } = req.params;
+    const loggedInUser = req.session.userId;
+    console.log(
+        "viewedProfile: ",
+        viewedProfile,
+        " loggedInUser: ",
+        loggedInUser
+    );
+    db.deleteFriendRequest(loggedInUser, viewedProfile)
+        .then(() => {
+            res.json({ success: true });
+        })
+        .catch(console.log);
 });
 
 app.get("/relation/:id.json", (req, res) => {
@@ -374,10 +408,27 @@ app.get("/user/:id.json", (req, res) => {
                 }
             })
             .catch((error) => {
-                console.log("error in getUser at /user/:id.json", error);
+                console.log("error in getUser at  /user/:id.json", error);
                 res.json({ userNotFound: true });
             });
     }
+});
+
+app.get("/friends.json", (req, res) => {
+    const loggedInUser = req.session.userId;
+    // console.log("fetch made to friends!");
+    db.getFriendsAndWannabes(loggedInUser).then((data) => {
+        const friendsAndWannabes = {
+            friendsAndWannabes: data.rows.filter(
+                (pending) => pending.sender_id != loggedInUser
+            ),
+            pendingRequests: data.rows.filter(
+                (pending) => pending.sender_id == loggedInUser
+            ),
+        };
+
+        res.json(friendsAndWannabes);
+    });
 });
 
 app.get("*", function (req, res) {
