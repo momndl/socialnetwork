@@ -2,7 +2,7 @@ import ProfilePic from "./profilepic";
 import BioEditor from "./bioEditor";
 
 export default function Profile(props) {
-    console.log("props in profile: ", props);
+    // console.log("props in profile: ", props);
     return (
         <div className="profileContainer">
             <h2>

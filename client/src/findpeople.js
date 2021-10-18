@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function FindPeople() {
     const [users, setUsers] = useState([]);
+    const [latestUsers, setLatestUsers] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     useEffect(() => {
         //console.log("ok check");
@@ -10,7 +11,7 @@ export default function FindPeople() {
             .then((res) => res.json())
             .then((latestUsers) => {
                 console.log("data in findpeople.js", latestUsers);
-                setUsers(latestUsers);
+                setLatestUsers(latestUsers);
             })
             .catch(console.log);
     }, []);
@@ -44,16 +45,35 @@ export default function FindPeople() {
 
     return (
         <section className="findPeopleContainer">
-            <input
-                type="text"
-                placeholder="find other users"
-                onChange={(e) => setSearchTerm(e.target.value)}
-                //defaultValue="find other users"
-                // onKeyDown={updateGreeting}
-                // onChange={(e) => setUser(e.target.value)}
-            />
-            <h2>latest users: </h2>
+            {latestUsers && (
+                <div className="latestPeopleResults">
+                    <h2>latest users: </h2>
+                    {latestUsers &&
+                        latestUsers.map((user) => (
+                            <div className="findResult" key={user.id}>
+                                <Link to={`/user/${user.id}`}>
+                                    <img src={user.pic_url} />
+                                    <p>
+                                        {user.first} {user.last}
+                                    </p>
+                                </Link>
+                            </div>
+                        ))}
+                </div>
+            )}
+
             <div className="findPeopleResults">
+                <div>
+                    <h2>find users: </h2>
+                    <input
+                        type="text"
+                        placeholder="find other users"
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        //defaultValue="find other users"
+                        // onKeyDown={updateGreeting}
+                        // onChange={(e) => setUser(e.target.value)}
+                    />
+                </div>
                 {users &&
                     users.map((user) => (
                         <div className="findResult" key={user.id}>

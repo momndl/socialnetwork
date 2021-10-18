@@ -6,6 +6,12 @@ import { Provider } from "react-redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import reducer from "./redux/reducer.js";
 import * as immutableState from "redux-immutable-state-invariant";
+import { io } from "socket.io-client";
+const socket = io.connect();
+
+socket.on("greeting", (data) => {
+    console.log("socket.on ->", data);
+});
 
 // createStore, applymiddleware from redux
 // Provider from react-redux

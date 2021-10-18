@@ -26,6 +26,7 @@ export default function Header(props) {
                 </Link>
             </div>
             <div className="headerRight">
+                <Link to="/chat">chat</Link>
                 <Link to="/friends">friends</Link>
 
                 <Link to="/find-people">find people!</Link>

@@ -159,11 +159,48 @@ body {
     border: solid rgb(109, 139, 57);
 }
 
+.findPeopleContainer {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    grid-template-rows: repeat(auto-fill, minmax(200px, 1fr));
+}
+
 .findPeopleContainer img {
     height: 200px;
     width: 200px;
     object-fit: cover;
     border-radius: 30%;
+}
+
+.latestPeopleResults {
+    border: solid darkolivegreen;
+    border-width: 0 2px 2px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.findPeopleResults {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(200px, 1fr));
+    justify-items: center;
+    border: solid darkolivegreen;
+    border-width: 0 0 2px 0;
+    padding: 10px;
+}
+
+.findPeopleResults input {
+    align-self: end;
+}
+
+.findPeopleResults h2 {
+    margin-top: 10px;
+}
+
+.findResult p {
+    margin: 5px;
+    text-align: center;
 }
 
 .headerRight {
@@ -289,3 +326,15 @@ body {
     margin: 5px;
     text-align: center;
 }
+
+/* 
+continue here for profile and bio component
+.profileContainer {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.profileContainer h2 {
+
+} */

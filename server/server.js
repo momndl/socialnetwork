@@ -9,6 +9,12 @@ const cryptoRandomString = require("crypto-random-string");
 const ses = require("../server/ses.js");
 const { uploader } = require("./upload");
 const s3 = require("./s3");
+const server = require("http").Server(app);
+const io = require("socket.io")(server, {
+    allowRequest: (req, callback) =>
+        callback(null, req.headers.referer.startsWith("http://localhost:3000")),
+});
+// copy from notes const server, const io
 
 app.use(compression());
 
@@ -435,6 +441,22 @@ app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 });
 
-app.listen(process.env.PORT || 3001, function () {
+server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
 });
+
+io.on("connection", (socket) => {
+    socket.emit("greeting", {
+        message: "hello from the server, socket is working",
+    });
+
+    // console.log("socket: ", socket);
+    // console.log("user with socket.id ", socket.id);
+    // socket.on("disconnect", () => {
+    //     console.log("user disconnected", socket.id);
+    // });
+});
+
+// socket.broadcast.emit("message", "this goes to everyone exept me!")
+
+// io.to(otherUserSocketId).emit

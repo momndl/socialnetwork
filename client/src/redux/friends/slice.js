@@ -1,9 +1,10 @@
 /* eslint-disable indent */
 export function friendsReducer(state = null, action) {
+    let newState = {};
     switch (action.type) {
         case "friends/receivedFriends": {
-            state = action.payload.friends;
-            return state;
+            newState = action.payload.friends;
+            return newState;
         }
         case "friends/acceptWannabe": {
             state = state.map((friends) => {

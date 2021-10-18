@@ -8,6 +8,7 @@ import FindPeople from "./findpeople";
 import Header from "./header";
 import OtherProfile from "./otherProfile.js";
 import Friends from "./friends.js";
+import Chat from "./chat.js";
 
 // add a route that renders our new friends component
 
@@ -97,6 +98,9 @@ export class App extends Component {
                 </Route>
                 <Route path="/friends">
                     <Friends />
+                </Route>
+                <Route path="/chat">
+                    <Chat />
                 </Route>
             </BrowserRouter>
         );
