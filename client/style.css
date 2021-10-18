@@ -277,3 +277,15 @@ body {
     align-items: center;
     margin: 5px;
 }
+
+.findPeopleResults {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(200px, 1fr));
+    justify-items: center;
+}
+
+.findResult p {
+    margin: 5px;
+    text-align: center;
+}

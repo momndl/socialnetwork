@@ -43,7 +43,7 @@ export default function FindPeople() {
     }, [searchTerm]);
 
     return (
-        <div className="findPeopleContainer">
+        <section className="findPeopleContainer">
             <input
                 type="text"
                 placeholder="find other users"
@@ -53,17 +53,19 @@ export default function FindPeople() {
                 // onChange={(e) => setUser(e.target.value)}
             />
             <h2>latest users: </h2>
-            {users &&
-                users.map((user) => (
-                    <div key={user.id}>
-                        <Link to={`/user/${user.id}`}>
-                            <img src={user.pic_url} />
-                            <p>
-                                {user.first} {user.last}
-                            </p>
-                        </Link>
-                    </div>
-                ))}
-        </div>
+            <div className="findPeopleResults">
+                {users &&
+                    users.map((user) => (
+                        <div className="findResult" key={user.id}>
+                            <Link to={`/user/${user.id}`}>
+                                <img src={user.pic_url} />
+                                <p>
+                                    {user.first} {user.last}
+                                </p>
+                            </Link>
+                        </div>
+                    ))}
+            </div>
+        </section>
     );
 }

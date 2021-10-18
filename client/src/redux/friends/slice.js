@@ -1,41 +1,48 @@
+/* eslint-disable indent */
 export function friendsReducer(state = null, action) {
-    if (action.type == "friends/receivedFriends") {
-        state = action.payload.friends;
-    } else if (action.type === "friends/acceptWannabe") {
-        //console.log("ähh okay, irgendwas in slice? state?:", state);
-        state = state.map((friends) => {
-            if (friends.id === action.payload.wannabeId) {
-                return {
-                    ...friends,
-                    accepted: true,
-                };
-            } else {
-                return friends;
-            }
-        });
-    } else if (action.type === "friends/removeFriend") {
-        let stateCopy = [...state];
+    switch (action.type) {
+        case "friends/receivedFriends": {
+            state = action.payload.friends;
+            return state;
+        }
+        case "friends/acceptWannabe": {
+            state = state.map((friends) => {
+                if (friends.id === action.payload.wannabeId) {
+                    return {
+                        ...friends,
+                        accepted: true,
+                    };
+                } else {
+                    return friends;
+                }
+            });
+        }
+        // eslint-disable-next-line no-fallthrough
+        case "friends/removeFriend": {
+            console.log("remove");
 
-        stateCopy = state.filter(
-            (friend) => friend.id != action.payload.friendId
-        );
+            const spreadState = [...state];
+            const stateUpdate = spreadState.filter(
+                (friend) => friend.id != action.payload.friendId
+            );
 
-        return stateCopy;
+            return stateUpdate;
+        }
+        default:
+            return state;
     }
-    return state;
 }
 
 export function pendingReducer(state = null, action) {
     if (action.type == "request/receivedPendingRequests") {
         state = action.payload.requests;
     } else if (action.type == "request/removeRequest") {
-        let stateCopy = [...state];
-
-        stateCopy = state.filter(
-            (friend) => friend.id != action.payload.friendId
+        const spreadState = [...state];
+        const stateUpdate = spreadState.filter(
+            (request) => request.id != action.payload.friendId
         );
 
-        return stateCopy;
+        return stateUpdate;
     }
     return state;
 }
