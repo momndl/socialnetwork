@@ -33,20 +33,6 @@ export function friendsReducer(state = null, action) {
     }
 }
 
-export function pendingReducer(state = null, action) {
-    if (action.type == "request/receivedPendingRequests") {
-        state = action.payload.requests;
-    } else if (action.type == "request/removeRequest") {
-        const spreadState = [...state];
-        const stateUpdate = spreadState.filter(
-            (request) => request.id != action.payload.friendId
-        );
-
-        return stateUpdate;
-    }
-    return state;
-}
-
 // Action Creators ----------------------
 export function receiveFriends(friends) {
     return {
@@ -65,20 +51,6 @@ export function acceptWannabe(wannabeId) {
 export function removeFriend(friendId) {
     return {
         type: "friends/removeFriend",
-        payload: { friendId },
-    };
-}
-
-export function receiveRequest(requests) {
-    return {
-        type: "request/receivedPendingRequests",
-        payload: { requests },
-    };
-}
-
-export function removeRequest(friendId) {
-    return {
-        type: "request/removeRequest",
         payload: { friendId },
     };
 }

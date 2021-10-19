@@ -7,11 +7,9 @@ import {
     receiveFriends,
     acceptWannabe,
     removeFriend,
-    removeRequest,
-    receiveRequest,
 } from "./redux/friends/slice.js";
 
-export default function Friends() {
+export default function Friends(props) {
     const dispatch = useDispatch();
 
     const friends = useSelector(
@@ -26,22 +24,26 @@ export default function Friends() {
         (state) =>
             state.friendsAndWannabes &&
             state.friendsAndWannabes.filter(
-                (friends) => friends.accepted == false
+                (friends) =>
+                    friends.accepted == false && friends.sender_id != props.id
             )
     );
 
     const pendingRequests = useSelector(
-        (state) => state.pendingRequests && state.pendingRequests
+        (state) =>
+            state.friendsAndWannabes &&
+            state.friendsAndWannabes.filter(
+                (friends) =>
+                    friends.accepted == false && friends.sender_id == props.id
+            )
     );
-    // const myPendingRequests = useSelector(state => state.state)
 
     useEffect(function () {
+        console.log("props in friends", props);
         fetch("/friends.json")
             .then((res) => res.json())
             .then((data) => {
-                console.log("222", data);
-                dispatch(receiveFriends(data.friendsAndWannabes));
-                dispatch(receiveRequest(data.pendingRequests));
+                dispatch(receiveFriends(data));
             });
     }, []);
 
@@ -62,17 +64,6 @@ export default function Friends() {
         }).then((res) => res.json());
         if (data.success) {
             dispatch(removeFriend(id));
-        } else {
-            return;
-        }
-    };
-
-    const handleRequests = async (id) => {
-        const data = await fetch(`/friends/remove/${id}.json`, {
-            method: "POST",
-        }).then((res) => res.json());
-        if (data.success) {
-            dispatch(removeRequest(id));
         } else {
             return;
         }
@@ -154,7 +145,7 @@ export default function Friends() {
                                     </h3>
                                     <button
                                         onClick={() =>
-                                            handleRequests(pending.id)
+                                            handleFriends(pending.id)
                                         }
                                     >
                                         cancel friend request

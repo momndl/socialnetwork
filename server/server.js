@@ -105,12 +105,11 @@ app.get("/user/id.json", function (req, res) {
 });
 
 app.post("/user/updatebio.json", (req, res) => {
-    const { draftBio } = req.body;
+    const { bio } = req.body;
 
-    db.updateBio(draftBio, req.session.userId).then((data) => {
+    db.updateBio(bio, req.session.userId).then((data) => {
         res.json({ officialBio: data.rows[0].bio });
     });
-    // res.json(req.body);
 });
 
 app.get("/user.json", (req, res) => {
@@ -389,18 +388,11 @@ app.get("/user/:id.json", (req, res) => {
 app.get("/friends.json", (req, res) => {
     const loggedInUser = req.session.userId;
 
-    db.getFriendsAndWannabes(loggedInUser).then((data) => {
-        const friendsAndWannabes = {
-            friendsAndWannabes: data.rows.filter(
-                (pending) => pending.sender_id != loggedInUser
-            ),
-            pendingRequests: data.rows.filter(
-                (pending) => pending.sender_id == loggedInUser
-            ),
-        };
-
-        res.json(friendsAndWannabes);
-    });
+    db.getFriendsAndWannabes(loggedInUser)
+        .then((data) => {
+            res.json(data.rows);
+        })
+        .catch(console.log);
 });
 
 app.get("*", function (req, res) {
@@ -420,7 +412,7 @@ io.on("connection", (socket) => {
 
     db.getLatestChatMessages()
         .then((res) => {
-            io.sockets.emit("latestChatMessages", res.rows);
+            io.sockets.emit("latestChatMessages", res.rows.reverse());
         })
         .catch(console.log);
 
@@ -432,14 +424,14 @@ io.on("connection", (socket) => {
         async function handleMessage(newMsg, userId) {
             const messages = await db.addChatMessage(userId, newMsg);
             const userInfo = await db.getUser(userId);
-            const { id: msgId, message, created_at } = messages.rows[0];
+            const { id: msgId, message, posted } = messages.rows[0];
             const { id, first, last, pic_url } = userInfo.rows[0];
 
             const newMessage = {
                 id: msgId,
                 user_id: id,
                 message: message,
-                created_at: created_at,
+                posted: posted,
                 first: first,
                 last: last,
                 pic_url: pic_url,

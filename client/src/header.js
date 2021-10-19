@@ -1,14 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Logo from "./logo.js";
 import ProfilePic from "./profilepic";
 
 export default function Header(props) {
-    useEffect(() => {
-        console.log("props", props);
-    }, []);
+    useEffect(() => {}, []);
     const handleLogout = () => {
-        console.log("hi");
         fetch("/logout")
             .then((res) => res.json())
             .then((data) => {

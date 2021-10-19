@@ -12,18 +12,9 @@ export const init = (store) => {
 
         socket.on("latestChatMessages", (msgs) => {
             store.dispatch(chatMessagesReceived(msgs));
-            console.log("chatti chat", msgs);
         });
 
-        // socket.on("chatMessage", (msg) =>
-        //     store.dispatch(chatMessageReceived(msg))
-        // );
-
         socket.on("addChatMsg", (msg) => {
-            console.log(
-                "got a message in the client!! about to start redux process by dispatching in here",
-                msg
-            );
             store.dispatch(chatMessageReceived(msg));
         });
     }

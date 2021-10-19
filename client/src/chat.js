@@ -35,12 +35,17 @@ export default function Chat() {
                     {chatMessages &&
                         chatMessages.map((message, i) => (
                             <div className="chatMessage" key={i}>
-                                <Link to={`/user/${message.user_id}`}>
-                                    <img src={message.pic_url}></img>
-                                </Link>
-                                <h2>
-                                    {message.first} {message.last}
-                                </h2>
+                                <div className="chatUser">
+                                    <Link to={`/user/${message.user_id}`}>
+                                        <img src={message.pic_url}></img>
+                                    </Link>
+                                    <Link to={`/user/${message.user_id}`}>
+                                        <h2>
+                                            {message.first} {message.last}
+                                        </h2>
+                                    </Link>
+                                    <span>{message.posted}</span>
+                                </div>
                                 <p>{message.message}</p>
                             </div>
                         ))}

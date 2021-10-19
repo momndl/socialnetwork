@@ -151,23 +151,15 @@ module.exports.getFriendsAndWannabes = (loggedInUser) => {
 
 module.exports.getLatestChatMessages = () => {
     return db.query(
-        `SELECT groupchat.id, user_id, message, groupchat.created_at, users.first, users.last, users.pic_url FROM groupchat
-JOIN users ON  users.id = user_id ORDER BY groupchat.id ASC;`,
+        `SELECT groupchat.id, user_id, message, TO_CHAR(groupchat.created_at, 'HH24:MI DD.MM.YY') AS posted, users.first, users.last, users.pic_url FROM groupchat
+JOIN users ON  users.id = user_id ORDER BY groupchat.id DESC LIMIT 10;`,
         []
     );
 };
 
 module.exports.addChatMessage = (user_id, message) => {
     return db.query(
-        `INSERT INTO groupchat (user_id, message) VALUES ($1, $2) RETURNING *`,
+        `INSERT INTO groupchat (user_id, message) VALUES ($1, $2) RETURNING id, message,  TO_CHAR(created_at, 'HH24:MI DD.MM.YY') AS posted`,
         [user_id, message]
     );
 };
-
-// module.exports.getUserFromMessage = (id) => {
-//     return db.query(
-//         `SELECT groupchat.id, user_id, message, groupchat.created_at, users.first, users.last, users.pic_url FROM groupchat
-// JOIN users ON  ($1) = user_id`,
-//         [id]
-//     );
-// };
