@@ -148,3 +148,26 @@ module.exports.getFriendsAndWannabes = (loggedInUser) => {
         [loggedInUser]
     );
 };
+
+module.exports.getLatestChatMessages = () => {
+    return db.query(
+        `SELECT groupchat.id, user_id, message, groupchat.created_at, users.first, users.last, users.pic_url FROM groupchat
+JOIN users ON  users.id = user_id ORDER BY groupchat.id ASC;`,
+        []
+    );
+};
+
+module.exports.addChatMessage = (user_id, message) => {
+    return db.query(
+        `INSERT INTO groupchat (user_id, message) VALUES ($1, $2) RETURNING *`,
+        [user_id, message]
+    );
+};
+
+// module.exports.getUserFromMessage = (id) => {
+//     return db.query(
+//         `SELECT groupchat.id, user_id, message, groupchat.created_at, users.first, users.last, users.pic_url FROM groupchat
+// JOIN users ON  ($1) = user_id`,
+//         [id]
+//     );
+// };

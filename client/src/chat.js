@@ -1,28 +1,56 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-
-import { io } from "socket.io-client";
-const socket = io.connect();
-
-socket.on("greeting", (data) => {
-    console.log("socket.on ->", data);
-});
+import { useEffect, useRef } from "react";
+import { socket } from "./socket";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 export default function Chat() {
-    // const dispatch = useDispatch();
+    const elemRef = useRef();
 
-    // const myPendingRequests = useSelector(state => state.state)
+    const chatMessages = useSelector(
+        (state) => state.chatMessages && state.chatMessages
+    );
 
-    useEffect(function () {
-        console.log("chat mounted");
-        socket.on("greeting", (data) => {
-            console.log("socket.on ->", data);
-        });
-    }, []);
+    useEffect(
+        function () {
+            elemRef.current.scrollTop =
+                elemRef.current.scrollHeight - elemRef.current.clientHeight;
+        },
+        [chatMessages]
+    );
+
+    const keyCheck = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+
+            socket.emit("NewChatMessage", e.target.value);
+            e.target.value = "";
+        }
+    };
 
     return (
         <>
             <h4> i am chat component</h4>
+            <div>
+                <div className="chatMessagesContainer" ref={elemRef}>
+                    {chatMessages &&
+                        chatMessages.map((message, i) => (
+                            <div className="chatMessage" key={i}>
+                                <Link to={`/user/${message.user_id}`}>
+                                    <img src={message.pic_url}></img>
+                                </Link>
+                                <h2>
+                                    {message.first} {message.last}
+                                </h2>
+                                <p>{message.message}</p>
+                            </div>
+                        ))}
+                </div>
+            </div>
+
+            <textarea
+                placeholder="add your message here"
+                onKeyDown={keyCheck}
+            ></textarea>
         </>
     );
 }

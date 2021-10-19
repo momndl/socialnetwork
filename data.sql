@@ -1,6 +1,6 @@
 -- DROP TABLE IF EXISTS reset_codes;
 -- DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS friendships;
+-- DROP TABLE IF EXISTS friendships;
 
 CREATE TABLE users(
       id SERIAL PRIMARY KEY,
@@ -26,4 +26,11 @@ CREATE TABLE friendships(
       recipient_id INT REFERENCES users(id) NOT NULL,
       accepted BOOLEAN DEFAULT false
       );
+
+CREATE TABLE groupchat(
+      id SERIAL PRIMARY KEY,
+      user_id INT REFERENCES users(id) NOT NULL,
+      message VARCHAR,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 

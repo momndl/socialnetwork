@@ -14,31 +14,30 @@ const io = require("socket.io")(server, {
     allowRequest: (req, callback) =>
         callback(null, req.headers.referer.startsWith("http://localhost:3000")),
 });
-// copy from notes const server, const io
 
 app.use(compression());
 
-// setup cookie middleware!
-app.use(express.json()); // we use this middleware to parse JSON requests coming in!
+app.use(express.json());
 
 let secrets;
 process.env.NODE_ENV === "production"
     ? (secrets = process.env)
     : (secrets = require("../secrets.json"));
 
-app.use(
-    cookieSession({
-        secret: `${secrets.cookieSecret}`,
-        maxAge: 1000 * 60 * 60 * 24 * 14,
-        sameSite: true,
-    })
-);
+const cookieSessionMiddleware = cookieSession({
+    secret: `${secrets.cookieSecret}`,
+    maxAge: 1000 * 60 * 60 * 24 * 90,
+    sameSite: true,
+});
+
+app.use(cookieSessionMiddleware);
+io.use(function (socket, next) {
+    cookieSessionMiddleware(socket.request, socket.request.res, next);
+});
 
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 
 app.post("/upload", uploader.single("file"), s3.uploadS3, (req, res) => {
-    // console.log("req.body", req.body);
-    console.log("req.file", req.file);
     if (req.file) {
         const { filename } = req.file;
         const url = "https://s3.amazonaws.com/spicedling/" + filename;
@@ -55,10 +54,8 @@ app.post("/upload", uploader.single("file"), s3.uploadS3, (req, res) => {
 });
 
 app.get("/find-people.json", (req, res) => {
-    console.log("next make a db query att /findpeople");
     db.findPeople()
         .then((data) => {
-            console.log("return data in server find three", data);
             res.json(data.rows);
         })
         .catch((error) => console.log("error in /find-people", error));
@@ -67,9 +64,8 @@ app.get("/find-people.json", (req, res) => {
 app.post("/find-more-people.json", (req, res) => {
     const { find } = req.body;
     const values = find.split(" ");
-    console.log("find in server", values.length);
-    let matches = [];
 
+    // do something async here to get lastnames!================================
     db.getMatchingUsersFirst(find)
         .then((data) => {
             // matches.push(data.rows);
@@ -103,8 +99,6 @@ app.post("/find-more-people.json", (req, res) => {
 // });
 
 app.get("/user/id.json", function (req, res) {
-    console.log("client wants to know if the user is registered/logged in");
-    console.log("user-id", req.session.userId);
     res.json({
         userId: req.session.userId,
     });
@@ -112,9 +106,8 @@ app.get("/user/id.json", function (req, res) {
 
 app.post("/user/updatebio.json", (req, res) => {
     const { draftBio } = req.body;
-    console.log("draftBio", draftBio);
+
     db.updateBio(draftBio, req.session.userId).then((data) => {
-        console.log("data from d b", data);
         res.json({ officialBio: data.rows[0].bio });
     });
     // res.json(req.body);
@@ -127,7 +120,6 @@ app.get("/user.json", (req, res) => {
             return data.rows[0];
         })
         .then((userInfo) => {
-            // console.log("haaalloo", userInfo);
             res.json({ userInfo });
         })
         .catch((error) => {
@@ -138,11 +130,9 @@ app.get("/user.json", (req, res) => {
 
 app.post("/password/reset/verify.json", (req, res) => {
     const { email, code, password } = req.body;
-    console.log(email);
 
     db.getResetCode(email)
         .then((data) => {
-            console.log("code results", data);
             if (data.rows[0].code == code) {
                 hash(password).then((hashedPW) => {
                     db.updatePassword(hashedPW, email).then(() => {
@@ -186,7 +176,6 @@ app.post("/password/reset/start.json", (req, res) => {
     db.regCheck(email)
         .then((data) => {
             if (data.rows[0]) {
-                console.log("juhu", address);
                 ses.sendEmail(address, subject, text);
                 db.addResetCode(email, secretCode)
                     .then(() => {
@@ -240,7 +229,6 @@ app.post("/login.json", (req, res) => {
                     success: false,
                     error: "invalid email or password :(",
                 });
-                // render error message, email or password unknown }
             }
         })
         .catch((error) =>
@@ -250,11 +238,8 @@ app.post("/login.json", (req, res) => {
 
 app.post("/registration.json", (req, res) => {
     const { first, last, email, password } = req.body;
-    console.log("first", first);
-    console.log("last", last);
-    console.log("email", email);
-    console.log("password", password);
 
+    // make this async=====================================================
     if (password && first && last && email) {
         db.regCheck(email)
             .then((data) => {
@@ -303,10 +288,9 @@ app.get("/logout", (req, res) => {
 });
 
 app.post("/update/status.json", (req, res) => {
-    console.log("post has been madem to update/status.json");
     const { buttonText, otherUserId: viewedProfile } = req.body;
     const loggedInUser = req.session.userId;
-    //console.log("buttonText:", buttonText, " other user id:", otherUserId);
+
     if (buttonText == "Send Friend Request") {
         db.setFriendRequest(loggedInUser, viewedProfile)
             .then(() => {
@@ -317,14 +301,12 @@ app.post("/update/status.json", (req, res) => {
         buttonText == "Cancel Friend Request" ||
         buttonText == "Unfriend"
     ) {
-        // database deletion
         db.deleteFriendRequest(loggedInUser, viewedProfile)
             .then(() => {
                 res.json({ buttonText: "Send Friend Request" });
             })
             .catch(console.log);
     } else if (buttonText == "Accept Friend Request") {
-        // database query, accepted truea
         db.updateFriendRequest(loggedInUser, viewedProfile)
             .then(() => {
                 res.json({ buttonText: "Unfriend" });
@@ -334,15 +316,9 @@ app.post("/update/status.json", (req, res) => {
 });
 
 app.post("/friends/update/:id.json", (req, res) => {
-    console.log("post to update friends has been made");
     const { id: viewedProfile } = req.params;
     const loggedInUser = req.session.userId;
-    console.log(
-        "viewedProfile: ",
-        viewedProfile,
-        " loggedInUser: ",
-        loggedInUser
-    );
+
     db.updateFriendRequest(loggedInUser, viewedProfile)
         .then(() => {
             res.json({ success: true });
@@ -351,15 +327,9 @@ app.post("/friends/update/:id.json", (req, res) => {
 });
 
 app.post("/friends/remove/:id.json", (req, res) => {
-    console.log("post to remove friends has been made");
     const { id: viewedProfile } = req.params;
     const loggedInUser = req.session.userId;
-    console.log(
-        "viewedProfile: ",
-        viewedProfile,
-        " loggedInUser: ",
-        loggedInUser
-    );
+
     db.deleteFriendRequest(loggedInUser, viewedProfile)
         .then(() => {
             res.json({ success: true });
@@ -372,7 +342,6 @@ app.get("/relation/:id.json", (req, res) => {
     const loggedInUser = req.session.userId;
     db.checkFriendship(loggedInUser, viewedProfile)
         .then((data) => {
-            // console.log("checkFriendship data", data);
             if (data.rowCount == 0) {
                 console.log("no friends");
                 res.json({ buttonText: "Send Friend Request" });
@@ -393,9 +362,6 @@ app.get("/relation/:id.json", (req, res) => {
             }
         })
         .catch(console.log);
-
-    //  console.log("fetch has been made", id, " test ",// profileId);
-    //res.json("ingo");
 });
 
 app.get("/user/:id.json", (req, res) => {
@@ -422,7 +388,7 @@ app.get("/user/:id.json", (req, res) => {
 
 app.get("/friends.json", (req, res) => {
     const loggedInUser = req.session.userId;
-    // console.log("fetch made to friends!");
+
     db.getFriendsAndWannabes(loggedInUser).then((data) => {
         const friendsAndWannabes = {
             friendsAndWannabes: data.rows.filter(
@@ -446,17 +412,42 @@ server.listen(process.env.PORT || 3001, function () {
 });
 
 io.on("connection", (socket) => {
-    socket.emit("greeting", {
-        message: "hello from the server, socket is working",
+    const userId = socket.request.session.userId;
+
+    if (!userId) {
+        return socket.disconnect(true);
+    }
+
+    db.getLatestChatMessages()
+        .then((res) => {
+            io.sockets.emit("latestChatMessages", res.rows);
+        })
+        .catch(console.log);
+
+    socket.on("NewChatMessage", (newMsg) => {
+        if (newMsg == "") {
+            return;
+        }
+        // make this try and catch
+        async function handleMessage(newMsg, userId) {
+            const messages = await db.addChatMessage(userId, newMsg);
+            const userInfo = await db.getUser(userId);
+            const { id: msgId, message, created_at } = messages.rows[0];
+            const { id, first, last, pic_url } = userInfo.rows[0];
+
+            const newMessage = {
+                id: msgId,
+                user_id: id,
+                message: message,
+                created_at: created_at,
+                first: first,
+                last: last,
+                pic_url: pic_url,
+            };
+
+            return io.sockets.emit("addChatMsg", newMessage);
+        }
+
+        handleMessage(newMsg, userId);
     });
-
-    // console.log("socket: ", socket);
-    // console.log("user with socket.id ", socket.id);
-    // socket.on("disconnect", () => {
-    //     console.log("user disconnected", socket.id);
-    // });
 });
-
-// socket.broadcast.emit("message", "this goes to everyone exept me!")
-
-// io.to(otherUserSocketId).emit

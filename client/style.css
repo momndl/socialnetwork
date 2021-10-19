@@ -327,6 +327,21 @@ body {
     text-align: center;
 }
 
+.chatMessagesContainer {
+    height: 400px;
+    overflow-y: scroll;
+    border: solid black 1px;
+}
+
+.chatMessage {
+    border: dashed tomato 1px;
+}
+.chatMessage img {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 /* 
 continue here for profile and bio component
 .profileContainer {

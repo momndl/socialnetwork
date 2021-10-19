@@ -7,6 +7,8 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import reducer from "./redux/reducer.js";
 import * as immutableState from "redux-immutable-state-invariant";
 import { io } from "socket.io-client";
+import { init } from "./socket.js";
+
 const socket = io.connect();
 
 socket.on("greeting", (data) => {
@@ -40,6 +42,7 @@ fetch("/user/id.json")
             // this means our user is not registered/logged in, we should see Welcome component
             ReactDOM.render(<Welcome />, document.querySelector("main"));
         } else {
+            init(store);
             // this means our user IS registered/logged in!
             ReactDOM.render(elem, document.querySelector("main"));
         }

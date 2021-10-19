@@ -95,3 +95,6 @@ ALSO TO DO: check routes in server -> user.json and user/:id -> something wrong 
 
 // LOGIN => hung up
 
+
+// create new database for chats, db query in server io.on, emit messages
+
