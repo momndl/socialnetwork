@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams, useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import { FriendshipButton } from "./FriendshipButton";
 
 export default function OtherProfile() {
+    let isFriend = [];
+    const friends = useSelector(
+        (state) =>
+            state.friendsAndWannabes &&
+            state.friendsAndWannabes.filter(
+                (friends) => friends.accepted == true
+            )
+    );
     const [user, setUser] = useState({});
     const [error, setError] = useState({});
 
@@ -31,6 +40,18 @@ export default function OtherProfile() {
             abort = true;
         };
     }, []);
+
+    const chatHandler = () => {
+        console.log("clicked");
+    };
+
+    if (friends) {
+        isFriend = friends.filter((friend) => friend.id == user.id);
+        console.log("isFriend", isFriend);
+        if (isFriend.length == 0) {
+            isFriend = null;
+        }
+    }
     return (
         <>
             {error.userNotFound && (
@@ -47,11 +68,12 @@ export default function OtherProfile() {
                 </p>
                 <p className="bio">{user.bio}</p>
                 <FriendshipButton otherUserId={otherUserId} />
+                {isFriend && (
+                    <>
+                        <Link to="/private-chat">private chat?</Link>
+                    </>
+                )}
             </div>
-
-            {/* here we want to render btn component */}
         </>
     );
 }
-
-// handle stuff like userinputs in url serverside

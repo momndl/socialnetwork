@@ -419,10 +419,24 @@ io.on("connection", (socket) => {
         })
         .catch(console.log);
 
+    db.getLatestPrivateMessages(userId)
+        .then((res) => {
+            //console.log(res.rows);
+
+            io.sockets.emit("latestPrivateChats", res.rows);
+        })
+        .catch(console.log);
+
     db.getOnlineUsers(onlineUsersArray)
         .then((res) => {
             // console.log("onlineusersArray", res);
             io.emit("onlineUsers", res.rows);
+        })
+        .catch(console.log);
+
+    db.getFriendsAndWannabes(userId)
+        .then((data) => {
+            io.emit("FriendsAndWannabes", data.rows);
         })
         .catch(console.log);
 
@@ -464,6 +478,6 @@ io.on("connection", (socket) => {
         // const UpdatedonlineUsersArray = [
         //     ...new Set(Object.values(onlineUsers)),
         // ];
-        io.emit("userDisconnected", { id: userId });
+        io.sockets.emit("userDisconnected", { id: userId });
     });
 });

@@ -34,3 +34,11 @@ CREATE TABLE groupchat(
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE private_chat(
+      id SERIAL PRIMARY KEY,
+      sender_id INT REFERENCES users(id) NOT NULL,
+      recipient_id INT REFERENCES users(id) NOT NULL,
+      message VARCHAR,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

@@ -152,7 +152,7 @@ module.exports.getFriendsAndWannabes = (loggedInUser) => {
 module.exports.getLatestChatMessages = () => {
     return db.query(
         `SELECT groupchat.id, user_id, message, TO_CHAR(groupchat.created_at, 'HH24:MI DD.MM.YY') AS posted, users.first, users.last, users.pic_url FROM groupchat
-JOIN users ON  users.id = user_id ORDER BY groupchat.id DESC LIMIT 10;`,
+JOIN users ON  users.id = user_id ORDER BY groupchat.id DESC LIMIT 10`,
         []
     );
 };
@@ -168,5 +168,13 @@ module.exports.getOnlineUsers = (idArray) => {
     return db.query(
         `SELECT id, first, last, pic_url FROM users WHERE id = ANY($1)`,
         [idArray]
+    );
+};
+
+module.exports.getLatestPrivateMessages = (loggedInUser) => {
+    return db.query(
+        `SELECT private_chat.id, sender_id, recipient_id, message, TO_CHAR(private_chat.created_at, 'HH24:MI DD.MM.YY') AS posted, users.first, users.last, users.pic_url FROM private_chat
+JOIN users ON  (recipient_id = ($1) AND sender_id = users.id) OR (sender_id = ($1) AND recipient_id = users.id) ORDER BY private_chat.id ASC`,
+        [loggedInUser]
     );
 };

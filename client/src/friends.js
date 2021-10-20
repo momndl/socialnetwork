@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-    receiveFriends,
+    //receiveFriends,
     acceptWannabe,
     removeFriend,
 } from "./redux/friends/slice.js";
@@ -40,11 +40,11 @@ export default function Friends(props) {
 
     useEffect(function () {
         console.log("props in friends", props);
-        fetch("/friends.json")
-            .then((res) => res.json())
-            .then((data) => {
-                dispatch(receiveFriends(data));
-            });
+        // fetch("/friends.json")
+        //     .then((res) => res.json())
+        //     .then((data) => {
+        //         dispatch(receiveFriends(data));
+        //     });
     }, []);
 
     const handleWannabes = async (id) => {
