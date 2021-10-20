@@ -3,7 +3,10 @@ import {
     chatMessagesReceived,
     chatMessageReceived,
 } from "./redux/messages/slice.js";
-
+import {
+    receiveOnlineUsers,
+    onlineUserDisconnect,
+} from "./redux/onlineUsers/slice";
 export let socket;
 
 export const init = (store) => {
@@ -16,6 +19,16 @@ export const init = (store) => {
 
         socket.on("addChatMsg", (msg) => {
             store.dispatch(chatMessageReceived(msg));
+        });
+
+        socket.on("onlineUsers", (onlineUsers) => {
+            store.dispatch(receiveOnlineUsers(onlineUsers));
+            // console.log("onlineUsers: ", onlineUsers);
+        });
+
+        socket.on("userDisconnected", (onlineUsers) => {
+            console.log("titikaka", onlineUsers);
+            store.dispatch(onlineUserDisconnect(onlineUsers.id));
         });
     }
 };

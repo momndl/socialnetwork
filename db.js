@@ -163,3 +163,10 @@ module.exports.addChatMessage = (user_id, message) => {
         [user_id, message]
     );
 };
+
+module.exports.getOnlineUsers = (idArray) => {
+    return db.query(
+        `SELECT id, first, last, pic_url FROM users WHERE id = ANY($1)`,
+        [idArray]
+    );
+};

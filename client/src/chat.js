@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { socket } from "./socket";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import OnlineUsers from "./onlineUsersInChat.js";
 
 export default function Chat() {
     const elemRef = useRef();
@@ -29,7 +30,9 @@ export default function Chat() {
 
     return (
         <>
-            <h4> i am chat component</h4>
+            <div>
+                <OnlineUsers />
+            </div>
             <div>
                 <div className="chatMessagesContainer" ref={elemRef}>
                     {chatMessages &&

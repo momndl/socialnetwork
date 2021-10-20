@@ -403,16 +403,26 @@ server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
 });
 
+const onlineUsers = {};
+
 io.on("connection", (socket) => {
     const userId = socket.request.session.userId;
 
     if (!userId) {
         return socket.disconnect(true);
     }
-
+    onlineUsers[socket.id] = userId;
+    const onlineUsersArray = [...new Set(Object.values(onlineUsers))];
     db.getLatestChatMessages()
         .then((res) => {
             io.sockets.emit("latestChatMessages", res.rows.reverse());
+        })
+        .catch(console.log);
+
+    db.getOnlineUsers(onlineUsersArray)
+        .then((res) => {
+            // console.log("onlineusersArray", res);
+            io.emit("onlineUsers", res.rows);
         })
         .catch(console.log);
 
@@ -441,5 +451,19 @@ io.on("connection", (socket) => {
         }
 
         handleMessage(newMsg, userId);
+    });
+
+    // HIER GEHTS GLEICH WEITER MIT ONLINE USERS! ====
+
+    socket.on("disconnect", () => {
+        console.log("socket.id after disco:", socket.id);
+        console.log("onlineUsers before deltion", onlineUsers);
+        delete onlineUsers[socket.id];
+        console.log("onlineUsers after del", onlineUsers);
+        // console.log("onlineUsersZzzZ", onlineUsers);
+        // const UpdatedonlineUsersArray = [
+        //     ...new Set(Object.values(onlineUsers)),
+        // ];
+        io.emit("userDisconnected", { id: userId });
     });
 });
