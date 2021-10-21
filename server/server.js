@@ -402,28 +402,40 @@ app.get("*", function (req, res) {
 server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
 });
-
+const newOnlineUsers = {};
 const onlineUsers = {};
-
 io.on("connection", (socket) => {
-    const userId = socket.request.session.userId;
+    // const users = [];
+    // for (let [id] of io.of("/").sockets) {
+    //     users.push({
+    //         userID: id,
+    //         username: "ingo",
+    //     });
+    //     console.log("users", users);
+    // }
+    // socket.emit("users", users);
 
+    const userId = socket.request.session.userId;
+    console.log("onlineUsers", onlineUsers);
+    console.log("mySocket", socket.id);
     if (!userId) {
         return socket.disconnect(true);
     }
     onlineUsers[socket.id] = userId;
+    newOnlineUsers[userId] = socket.id;
+
     const onlineUsersArray = [...new Set(Object.values(onlineUsers))];
+    console.log(onlineUsersArray);
+
     db.getLatestChatMessages()
         .then((res) => {
-            io.sockets.emit("latestChatMessages", res.rows.reverse());
+            socket.emit("latestChatMessages", res.rows.reverse());
         })
         .catch(console.log);
 
     db.getLatestPrivateMessages(userId)
         .then((res) => {
-            //console.log(res.rows);
-
-            io.sockets.emit("latestPrivateChats", res.rows);
+            socket.emit("latestPrivateChats", res.rows);
         })
         .catch(console.log);
 
@@ -436,7 +448,7 @@ io.on("connection", (socket) => {
 
     db.getFriendsAndWannabes(userId)
         .then((data) => {
-            io.emit("FriendsAndWannabes", data.rows);
+            socket.emit("FriendsAndWannabes", data.rows);
         })
         .catch(console.log);
 
@@ -461,23 +473,58 @@ io.on("connection", (socket) => {
                 pic_url: pic_url,
             };
 
-            return io.sockets.emit("addChatMsg", newMessage);
+            return io.emit("addChatMsg", newMessage);
         }
 
         handleMessage(newMsg, userId);
     });
 
+    socket.on("privateNewChatMessage", (newPrvMsg) => {
+        if (newPrvMsg == "") {
+            return;
+        }
+
+        const { message, recipient_id, socket_id: friendSocket } = newPrvMsg;
+        console.log("message", message);
+        console.log("omg digga", friendSocket);
+
+        // make this try and catch
+        async function handleMessage(newPrvMsg, userId) {
+            const messages = await db.addPrvChatMessage(
+                userId,
+                recipient_id,
+                newPrvMsg
+            );
+            const userInfo = await db.getUser(userId);
+            const { id: msgId, message, posted } = messages.rows[0];
+            const { id, first, last, pic_url } = userInfo.rows[0];
+
+            const newMessage = {
+                id: msgId,
+                sender_id: id,
+                recipient_id: recipient_id,
+                message: message,
+                posted: posted,
+                first: first,
+                last: last,
+                pic_url: pic_url,
+            };
+
+            io.to(newOnlineUsers[recipient_id]).emit(
+                "addPrvChatMsg",
+                newMessage
+            );
+            socket.emit("addPrvChatMsg", newMessage);
+        }
+
+        handleMessage(message, userId);
+    });
+
     // HIER GEHTS GLEICH WEITER MIT ONLINE USERS! ====
 
     socket.on("disconnect", () => {
-        console.log("socket.id after disco:", socket.id);
-        console.log("onlineUsers before deltion", onlineUsers);
         delete onlineUsers[socket.id];
-        console.log("onlineUsers after del", onlineUsers);
-        // console.log("onlineUsersZzzZ", onlineUsers);
-        // const UpdatedonlineUsersArray = [
-        //     ...new Set(Object.values(onlineUsers)),
-        // ];
-        io.sockets.emit("userDisconnected", { id: userId });
+
+        io.emit("userDisconnected", { id: userId });
     });
 });

@@ -3,9 +3,12 @@ import { useSelector } from "react-redux";
 import { useParams, useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import { FriendshipButton } from "./FriendshipButton";
+import PrivateChat from "./privateChat";
+import { socket } from "./socket";
 
 export default function OtherProfile() {
     let isFriend = [];
+
     const friends = useSelector(
         (state) =>
             state.friendsAndWannabes &&
@@ -13,14 +16,15 @@ export default function OtherProfile() {
                 (friends) => friends.accepted == true
             )
     );
+
     const [user, setUser] = useState({});
     const [error, setError] = useState({});
-
+    const [chat, setChat] = useState({});
     const { otherUserId } = useParams();
     const history = useHistory();
     useEffect(() => {
         let abort = false;
-
+        setChat(false);
         if (!abort) {
             fetch(`/user/${otherUserId}.json`)
                 .then((res) => res.json())
@@ -42,6 +46,11 @@ export default function OtherProfile() {
     }, []);
 
     const chatHandler = () => {
+        if (chat) {
+            setChat(false);
+        } else {
+            setChat(true);
+        }
         console.log("clicked");
     };
 
@@ -60,20 +69,31 @@ export default function OtherProfile() {
                     <Link to="/find-people">try again?</Link>
                 </>
             )}
-            <div className="otherProfile">
-                <img src={user.pic_url} alt={user.first} />
+            {!error.userNotFound && (
+                <>
+                    <div className="otherProfile">
+                        <img src={user.pic_url} alt={user.first} />
 
-                <p className="name">
-                    {user.first} {user.last}
-                </p>
-                <p className="bio">{user.bio}</p>
-                <FriendshipButton otherUserId={otherUserId} />
-                {isFriend && (
-                    <>
-                        <Link to="/private-chat">private chat?</Link>
-                    </>
-                )}
-            </div>
+                        <p className="name">
+                            {user.first} {user.last}
+                        </p>
+                        <p className="bio">{user.bio}</p>
+                        <FriendshipButton otherUserId={otherUserId} />
+                        {isFriend && (
+                            <>
+                                <button
+                                    className="chatHandler"
+                                    onClick={chatHandler}
+                                >
+                                    private chat?
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </>
+            )}
+
+            {chat && <PrivateChat otherUserId={otherUserId} />}
         </>
     );
 }

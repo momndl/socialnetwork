@@ -164,6 +164,13 @@ module.exports.addChatMessage = (user_id, message) => {
     );
 };
 
+module.exports.addPrvChatMessage = (sender_id, recipient_id, message) => {
+    return db.query(
+        `INSERT INTO private_chat (sender_id, recipient_id, message) VALUES ($1, $2, $3) RETURNING id, message,  TO_CHAR(created_at, 'HH24:MI DD.MM.YY') AS posted, sender_id, recipient_id`,
+        [sender_id, recipient_id, message]
+    );
+};
+
 module.exports.getOnlineUsers = (idArray) => {
     return db.query(
         `SELECT id, first, last, pic_url FROM users WHERE id = ANY($1)`,
@@ -171,10 +178,20 @@ module.exports.getOnlineUsers = (idArray) => {
     );
 };
 
+// module.exports.getLatestPrivateMessages = (loggedInUser) => {
+//     return db.query(
+//         `SELECT private_chat.id, sender_id, recipient_id, message, TO_CHAR(private_chat.created_at, 'HH24:MI DD.MM.YY') AS posted, users.first, users.last, users.pic_url FROM private_chat
+//  JOIN users ON  (sender_id = ($1) AND sender_id = users.id) OR(recipient_id = ($1) AND recipient_id = users.id) ORDER BY private_chat.id ASC`,
+//         [loggedInUser]
+//     );
+// };
+
 module.exports.getLatestPrivateMessages = (loggedInUser) => {
     return db.query(
-        `SELECT private_chat.id, sender_id, recipient_id, message, TO_CHAR(private_chat.created_at, 'HH24:MI DD.MM.YY') AS posted, users.first, users.last, users.pic_url FROM private_chat
-JOIN users ON  (recipient_id = ($1) AND sender_id = users.id) OR (sender_id = ($1) AND recipient_id = users.id) ORDER BY private_chat.id ASC`,
+        `SELECT private_chat.id, sender_id, recipient_id, message, TO_CHAR(private_chat.created_at, 'HH24:MI DD.MM.YY')
+ AS posted, users.first, users.last, users.pic_url FROM private_chat
+JOIN users ON  (sender_id = users.id) AND (sender_id = ($1) OR recipient_id = ($1))
+ORDER BY private_chat.id ASC`,
         [loggedInUser]
     );
 };

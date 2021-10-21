@@ -53,10 +53,10 @@ export default class BioEditor extends Component {
     render() {
         return (
             <div>
-                <p>bio editor component</p>
-
                 {!this.props.bio && (
-                    <h2 onClick={this.openTextArea}> add bio</h2>
+                    <h2 className="editBioBtn" onClick={this.openTextArea}>
+                        add bio
+                    </h2>
                 )}
                 {this.state.textAreaVisible && (
                     <>
@@ -74,7 +74,9 @@ export default class BioEditor extends Component {
                 {this.props.bio && (
                     <>
                         <h2> {this.props.bio}</h2>
-                        <h2 onClick={this.openTextArea}> edit bio</h2>
+                        <h2 className="editBioBtn" onClick={this.openTextArea}>
+                            edit bio
+                        </h2>
                     </>
                 )}
             </div>

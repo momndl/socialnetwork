@@ -8,12 +8,27 @@ import {
     onlineUserDisconnect,
 } from "./redux/onlineUsers/slice";
 import { receiveFriends } from "./redux/friends/slice.js";
-import { privateChatMessagesReceived } from "./redux/privateChat/slice";
+import {
+    privateChatMessagesReceived,
+    privateChatMessageReceived,
+} from "./redux/privateChat/slice";
 export let socket;
 
 export const init = (store) => {
     if (!socket) {
         socket = io.connect();
+
+        socket.on("test123", (msg) => {
+            console.log("incoming", msg);
+        });
+
+        socket.on("test1234", (msg) => {
+            console.log("incominggggg", msg);
+        });
+
+        socket.on("users", (msg) => {
+            console.log("usersss", msg);
+        });
 
         socket.on("latestChatMessages", (msgs) => {
             store.dispatch(chatMessagesReceived(msgs));
@@ -34,12 +49,16 @@ export const init = (store) => {
 
         socket.on("latestPrivateChats", (msgs) => {
             store.dispatch(privateChatMessagesReceived(msgs));
-            console.log("privat:", msgs);
+        });
+
+        socket.on("addPrvChatMsg", (msg) => {
+            store.dispatch(privateChatMessageReceived(msg));
+            console.log("ingo:", msg);
         });
 
         socket.on("userDisconnected", (onlineUsers) => {
-            console.log("titikaka", onlineUsers);
             store.dispatch(onlineUserDisconnect(onlineUsers.id));
+            console.log("user left", onlineUsers);
         });
     }
 };

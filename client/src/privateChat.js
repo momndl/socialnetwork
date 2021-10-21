@@ -2,20 +2,27 @@ import { useEffect, useRef } from "react";
 import { socket } from "./socket";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import OnlineUsers from "./onlineUsersInChat.js";
 
-export default function PrivateChat() {
+export default function PrivateChat(props) {
     const elemRef = useRef();
+    const imgRef = useRef();
 
     const privateMessages = useSelector(
-        (state) => state.privateChatMessages && state.privateChatMessages
+        (state) =>
+            state.privateChatMessages &&
+            state.privateChatMessages.filter(
+                (message) =>
+                    message.recipient_id == props.otherUserId ||
+                    message.sender_id == props.otherUserId
+            )
     );
 
     useEffect(
         function () {
-            console.log("privatechat");
+            console.log("privatechat mounted");
             elemRef.current.scrollTop =
                 elemRef.current.scrollHeight - elemRef.current.clientHeight;
+            // imgRef.current.style.color = "red";
         },
         [privateMessages]
     );
@@ -23,10 +30,15 @@ export default function PrivateChat() {
     const keyCheck = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
-
-            // socket.emit("NewChatMessage", e.target.value);
+            const message = {
+                message: e.target.value,
+                recipient_id: props.otherUserId,
+                socket_id: socket.id,
+            };
+            socket.emit("privateNewChatMessage", message);
             e.target.value = "";
         }
+        // console.log((elemRef.style.color = "red"));
     };
 
     return (
@@ -40,7 +52,7 @@ export default function PrivateChat() {
                                     <img src={message.pic_url}></img>
                                 </Link>
                                 <Link to={`/user/${message.id}`}>
-                                    <h2>
+                                    <h2 ref={imgRef}>
                                         {message.first} {message.last}
                                     </h2>
                                 </Link>

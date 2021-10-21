@@ -22,8 +22,8 @@ export default function Chat() {
     const keyCheck = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
-            // hier neue emitter, für privat chat message
-            //socket.emit("NewChatMessage", e.target.value);
+
+            socket.emit("NewChatMessage", e.target.value);
             e.target.value = "";
         }
     };
