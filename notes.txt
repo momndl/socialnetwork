@@ -1,0 +1,100 @@
+sudo service postgresql start
+database = socialnetwork
+
+
+vivacious.camp@spicedling.email - sender 
+vivacious.camp+funky@spicedling.email
+vivacious.camp+funkychicken@spicedling.email
+
+
+
+// TODO ==
+- styling is nice,
+- add interval to code query
+- everything is in welcome section... change!
+- catch editing -> do it like get /user.json
+
+
+
+=== NOTES for PART 4 ===
+-> loged in user experience -> like welcome but more tricky , router in part 5.  
+-> three components, app -> route component. profile pic, shows profile pic(or default). uploader -> modal, appears when user clicks on profile pic. 
+- data flows from parent to child. one way -> store information in app component (state) -> change data there .
+- in app fetch, something when mounted
+- update database -> add bio, pic url
+-component did mount runs after render is called!!! -> render will run everry time state changes!
+
+-uploader component, make it a class so it has state and can show a loading status after upload
+
+// NEXT ->
+fetch draft bio to server, store in database, return bio from database to app. lazy sunday
+
+-> hooks <-
+#1 - start with use useState(), useEffect()
+#2 - can only be called from function componenent
+#3 - have to be called from top level. cant be called inside a loop or conditional
+#4 - have to run everytime fn component is called
+
+export default function Profile() {
+    - state related stuff 
+    - hook
+
+}
+
+NOTES TO TESTING SHIZZLE -
+normal file names app.test.js ->
+
+==============================
+NOTES TO REDUX ==>
+
+STORE => central component of redux, holds the state.
+
+ACTION => fancy term for javascript object, describing an event to lead to a state update i.E. { type: "bio/updated", payload: "data"} 
+
+ACTION CREATOR => FUNCTIONS THAT RETURN ACTIONS
+
+DISPATCHING => act of sending an action to the store.
+
+REDUCER => function with two inputs, one output(newState) i.E.(state, action) => newState
+    - not allowed to change the previous state! -> always create new copy of state 
+    - not allowed to cause side effects (any kind of action such as ajax requests, or db.querys etc.)
+
+                        function reducer(state, action) {
+
+                            const newState = {}
+
+                            if(action.type === "todo/added") {
+                                newState.todo = [...state.todo, action.payload]
+                            }
+
+                            return newState
+                        }
+
+    ==================== objects are reference values!!! ======================== 
+    so use the ... spread operator!
+    BUT! => it only copies on root level. nested values need to be treatet different -> use spreadoperator again :D 
+
+
+    =================== REDUX ON SN =======================
+    - one list for friends and wannabees. 
+    - friends and wannabees: 
+                const q = `
+                SELECT users.id, first, last, image, accepted
+                FROM friendships
+                JOIN users
+                ON (accepted = false AND recipient_id = $1 AND requester_id = users.id)
+                OR (accepted = true AND recipient_id = $1 AND requester_id = users.id)
+                OR (accepted = true AND requester_id = $1 AND recipient_id = users.id)
+            `;
+            -> an array of friends and wannabees. friends true, wannabes false -> use this on server to get friends an wannabees. 
+    
+    - refer to hotOrNot Branch for redux boilerplate 
+        -> friends componenen(like hotornot.js), redux/reducer.js, redux/friends/slice.js, initalze start.js, app.js(router)
+
+ALSO TO DO: check routes in server -> user.json and user/:id -> something wrong happens?
+
+// LOGIN => hung up => DONE
+
+
+// create new database for chats, db query in server io.on, emit messages
+
