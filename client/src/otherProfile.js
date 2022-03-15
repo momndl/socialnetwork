@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams, useHistory } from "react-router";
+import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { FriendshipButton } from "./FriendshipButton";
 import PrivateChat from "./privateChat";

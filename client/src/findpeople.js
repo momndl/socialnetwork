@@ -6,14 +6,13 @@ export default function FindPeople() {
     const [latestUsers, setLatestUsers] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     useEffect(() => {
-        //console.log("ok check");
         fetch("/find-people.json")
             .then((res) => res.json())
             .then((latestUsers) => {
                 console.log("data in findpeople.js", latestUsers);
                 setLatestUsers(latestUsers);
             })
-            .catch(console.log);
+            .catch((err) => console.log(err));
     }, []);
 
     useEffect(() => {

@@ -91,13 +91,6 @@ app.post("/find-more-people.json", (req, res) => {
         .catch((error) => console.log("error in /find-more-people", error));
 });
 
-// app.post("/test.json", (req, res) => {
-//     console.log("irgendwas angegkommen in test");
-//     const body = req.body;
-//     console.log("body in test", body);
-//     res.json(body);
-// });
-
 app.get("/user/id.json", function (req, res) {
     res.json({
         userId: req.session.userId,
@@ -113,7 +106,6 @@ app.post("/user/updatebio.json", (req, res) => {
 });
 
 app.get("/user.json", (req, res) => {
-    console.log("i dont want this");
     db.getUser(req.session.userId)
         .then((data) => {
             return data.rows[0];
